@@ -1,0 +1,55 @@
+define(["require", "exports", "logging/visible/visibility-tester"], function (require, exports, visibility_tester_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.TrackingRef = exports.trackingRef = void 0;
+    var v = new visibility_tester_1.VisibilityTester();
+    function trackingRef() {
+        var current;
+        return function (el) {
+            if (el === null && current) {
+                v.removeElementToCheck(current);
+            }
+            else if (el && !current) {
+                v.addElementToCheck(el);
+                current = el;
+            }
+        };
+    }
+    exports.trackingRef = trackingRef;
+    var TrackingRef = (function () {
+        function TrackingRef() {
+            var _this = this;
+            Object.defineProperty(this, "current", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "ref", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: function (el) { return _this.handleChange(el); }
+            });
+        }
+        Object.defineProperty(TrackingRef.prototype, "handleChange", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (el) {
+                if (el != null && this.current == null) {
+                    this.current = el;
+                    v.addElementToCheck(this.current);
+                }
+                else if (el == null && this.current != null) {
+                    v.removeElementToCheck(this.current);
+                    this.current = null;
+                }
+            }
+        });
+        return TrackingRef;
+    }());
+    exports.TrackingRef = TrackingRef;
+});
+
+//# sourceMappingURL=react-track-visible.js.map

@@ -1,0 +1,195 @@
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+define(["require", "exports", "react", "react"], function (require, exports, React, react_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.JumpLinksComponent = exports.doScrollAnimation = exports.doScrollAnimations = void 0;
+    var studyNavMobile = window.matchMedia("(max-width: 991px)");
+    function doScrollAnimations() {
+        var scrollConfigurations = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            scrollConfigurations[_i] = arguments[_i];
+        }
+        scrollConfigurations.forEach(doScrollAnimation);
+    }
+    exports.doScrollAnimations = doScrollAnimations;
+    var animationMap = {};
+    function doScrollAnimation(scrollConfiguration) {
+        var element = scrollConfiguration.element, isVertical = scrollConfiguration.isVertical, targetPosition = scrollConfiguration.targetPosition;
+        var initialPosition = element[scrollConfiguration.isVertical ? "scrollTop" : "scrollLeft"];
+        if (targetPosition == initialPosition) {
+            return;
+        }
+        var scrollEvents = ["wheel", "DOMMouseScroll", "mousewheel", "touchmove"];
+        var cancelAnimation = function () {
+            cancelAnimationFrame(animationMap[scrollConfiguration.id]);
+            animationMap[scrollConfiguration.id] = null;
+            scrollEvents.forEach(function (scrollEvent) { return element.removeEventListener(scrollEvent, cancelAnimation); });
+        };
+        cancelAnimation(null);
+        scrollEvents.forEach(function (scrollEvent) { return element.addEventListener(scrollEvent, cancelAnimation); });
+        var startTimestamp = null;
+        var scrollDistance = Math.abs(scrollConfiguration.targetPosition - initialPosition);
+        var durationMillis = !!(scrollConfiguration.duration) ? scrollConfiguration.duration(scrollDistance) : 2.5 * Math.pow(scrollDistance, 0.8);
+        var step = function (timestamp) {
+            var _a;
+            if (!startTimestamp) {
+                startTimestamp = timestamp;
+            }
+            var elapsed = Math.min(timestamp - startTimestamp, durationMillis);
+            var elapsedPercent = elapsed / durationMillis;
+            var scrollDisplacement = targetPosition - initialPosition;
+            var scrollPercent = elapsedPercent < 0.5 ? 16 * Math.pow(elapsedPercent, 5) : 1 - Math.pow(-2 * elapsedPercent + 2, 5) / 2;
+            var nextPosition = initialPosition + scrollPercent * scrollDisplacement;
+            element.scrollTo((_a = {},
+                _a[isVertical ? "top" : "left"] = nextPosition,
+                _a.behavior = "auto",
+                _a));
+            if (elapsed < durationMillis) {
+                animationMap[scrollConfiguration.id] = requestAnimationFrame(step);
+            }
+            else {
+                if (scrollConfiguration.onAnimationComplete) {
+                    scrollConfiguration.onAnimationComplete();
+                }
+                cancelAnimation("animation is done!" + (new Date().toISOString()));
+            }
+        };
+        animationMap[scrollConfiguration.id] = requestAnimationFrame(step);
+    }
+    exports.doScrollAnimation = doScrollAnimation;
+    function getTargetPositionForActiveJumpLink(barElement, activeElement) {
+        var barBounds = barElement.getBoundingClientRect();
+        var activeBounds = activeElement.getBoundingClientRect();
+        var desiredScrollLeft = (barElement.scrollLeft + activeBounds.left) - ((barBounds.width - activeBounds.width) / 2);
+        return Math.min(barElement.scrollWidth - barBounds.width, Math.max(0, desiredScrollLeft));
+    }
+    function buildRange(minInclusive, maxInclusive, step) {
+        var arr = [];
+        var curr = minInclusive;
+        while (curr <= maxInclusive) {
+            arr.push(curr);
+            curr += step;
+        }
+        return arr;
+    }
+    var JumpLinksComponent = function (_a) {
+        var jumpLinks = _a.jumpLinks, activeIndex = _a.activeIndex, linkOnClick = _a.linkOnClick, isDesktop = _a.isDesktop;
+        var _b = (0, react_1.useState)(false), isSticky = _b[0], setIsSticky = _b[1];
+        var _c = (0, react_1.useState)(function () { return studyNavMobile.matches; }), isStudyNavMobile = _c[0], setIsStudyNavMobile = _c[1];
+        var nonStickyRef = (0, react_1.useRef)(null);
+        var stickyRef = (0, react_1.useRef)(null);
+        if (!jumpLinks || jumpLinks.length === 0)
+            return null;
+        (0, react_1.useEffect)(function () {
+            var nonSticky = nonStickyRef.current;
+            var sticky = stickyRef.current;
+            var jumpLinkScrollWidth = sticky.scrollWidth;
+            var viewPortWidth = document.documentElement.clientWidth;
+            if (!!nonSticky && !!sticky && activeIndex >= 0 && jumpLinkScrollWidth > viewPortWidth) {
+                var configId = "externalChangeToActiveIndex";
+                var clickScrollAnimationId = "verticalScrollForUserClick";
+                if (!animationMap[configId] && !animationMap[clickScrollAnimationId]) {
+                    var activeElement = sticky.querySelector(".active");
+                    doScrollAnimation({
+                        id: configId,
+                        element: stickyRef.current,
+                        isVertical: false,
+                        targetPosition: getTargetPositionForActiveJumpLink(stickyRef.current, activeElement),
+                    });
+                }
+            }
+        }, [activeIndex]);
+        (0, react_1.useEffect)(function () {
+            var eventType = "change";
+            var handler = function (event) { return setIsStudyNavMobile(event.matches); };
+            studyNavMobile.addEventListener(eventType, handler);
+            return function () { return studyNavMobile.removeEventListener(eventType, handler); };
+        });
+        (0, react_1.useEffect)(function () {
+            var studyNav = document.querySelector(".study-nav");
+            var rootMargin = "-".concat(studyNav.clientHeight, "px");
+            var fudgeFactor = 1;
+            var observer = new IntersectionObserver(function (_a) {
+                var e = _a[0];
+                var nonStickyBottom = e.boundingClientRect.bottom;
+                var stickyBottom = stickyRef.current.getBoundingClientRect().bottom;
+                var isHiddenBehindStickyNav = nonStickyBottom <= stickyBottom + fudgeFactor;
+                setIsSticky(isHiddenBehindStickyNav);
+            }, {
+                threshold: buildRange(0, 1, 0.01),
+                rootMargin: rootMargin,
+            });
+            observer.observe(nonStickyRef.current);
+            return function () { observer.unobserve(nonStickyRef.current); };
+        });
+        function getClassNames(index) {
+            var classNames = [];
+            if (index === ((isDesktop && !isSticky) ? 0 : activeIndex)) {
+                classNames.push('active');
+            }
+            return classNames.join(" ");
+        }
+        function convergentPowerTimeFunction(distance, power, multiplier) {
+            return multiplier * Math.pow(Math.abs(distance), power);
+        }
+        function onJumpLinkClick(event, index) {
+            var viewPortWidth = document.documentElement.clientWidth;
+            var jumpLinksScrollWidth = stickyRef.current.scrollWidth;
+            event.preventDefault();
+            var clickedLink = event.currentTarget;
+            var jumpSection = document.querySelector(clickedLink.getAttribute("href"));
+            var initialScrollTop = document.documentElement.scrollTop;
+            var targetScrollTop = initialScrollTop + jumpSection.getBoundingClientRect().top
+                - parseInt(getComputedStyle(jumpSection).scrollMarginTop);
+            var verticalScrollDuration = convergentPowerTimeFunction(targetScrollTop - initialScrollTop, 0.8, 2.7);
+            doScrollAnimations.apply(void 0, __spreadArray([{
+                    id: "verticalScrollForUserClick",
+                    element: document.documentElement,
+                    isVertical: true,
+                    targetPosition: targetScrollTop,
+                    duration: function () { return verticalScrollDuration; },
+                }], (jumpLinksScrollWidth > viewPortWidth ? [{
+                    id: "horizontalScrollForUserClick",
+                    element: stickyRef.current,
+                    isVertical: false,
+                    targetPosition: getTargetPositionForActiveJumpLink(stickyRef.current, event.currentTarget),
+                    duration: function () { return verticalScrollDuration; },
+                }] : []), false));
+        }
+        function formatJumpLinkCnames(sectionId) {
+            return "jump_link_" + sectionId.replace("-", "_");
+        }
+        return React.createElement(React.Fragment, null,
+            React.createElement("div", __assign({ className: "jump-links-container non-sticky", ref: nonStickyRef }, (!isSticky ? {} : { hidden: true })), jumpLinks.map(function (linkItem, index) {
+                return React.createElement("a", { key: "product-jump-link--non-sticky-".concat(index), href: "#".concat(linkItem.sectionId), className: linkItem.className + (index == (activeIndex || 0) ? " active" : ""), draggable: false, "data-cname": formatJumpLinkCnames(linkItem.sectionId), onClick: function (e) { return onJumpLinkClick(e, index); } },
+                    React.createElement("span", { className: "jump-link__icon" }),
+                    React.createElement("span", { className: "jump-link__label" }, linkItem.linkLabel));
+            })),
+            React.createElement("div", __assign({ className: "jump-links-container sticky", ref: stickyRef }, (isSticky ? {} : { hidden: true })), jumpLinks.map(function (linkItem, index) {
+                return React.createElement("a", { key: "product-jump-link--sticky-".concat(index), href: "#".concat(linkItem.sectionId), className: getClassNames(index), draggable: false, "data-cname": formatJumpLinkCnames(linkItem.sectionId), onClick: function (e) { return onJumpLinkClick(e, index); } },
+                    React.createElement("span", { className: "jump-link__label" }, linkItem.linkLabel));
+            })));
+    };
+    exports.JumpLinksComponent = JumpLinksComponent;
+});
+
+//# sourceMappingURL=JumpLinks.js.map

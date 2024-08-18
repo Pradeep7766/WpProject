@@ -1,0 +1,27 @@
+define(["require", "exports", "react", "react", "util/remspect"], function (require, exports, React, react_1, remspect) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.CreateAccountBar = void 0;
+    var CreateAccountBar = function () {
+        var _a = (0, react_1.useState)(null), email = _a[0], setEmail = _a[1];
+        var _b = (0, react_1.useState)(null), userType = _b[0], setUserType = _b[1];
+        var createAccountButton = (0, react_1.useRef)();
+        var openRegModal = function (event) {
+            event.preventDefault();
+            setTimeout(function () { return createAccountButton.current.click(); }, 100);
+        };
+        return React.createElement("form", { className: "create-account-bar", onSubmit: function (event) { return openRegModal(event); } },
+            React.createElement("div", { className: "create-account-bar__inner" },
+                React.createElement("input", { "data-cname": "mobile_hero_email", "test-id": "mobile_hero_email", className: "email form-control", type: "text", name: "email", placeholder: "Email address", onChange: function (event) { return setEmail(event.target.value); }, defaultValue: email, "aria-label": "Email address" }),
+                React.createElement("select", { "data-action-toggle": "", className: "form-control", id: "heroUserType", name: "userType", "data-cname": "home_cta_bar_select_persona", "test-id": "home_cta_bar_select_persona", onChange: function (event) { return setUserType(event.target.value); }, defaultValue: userType, "aria-label": "User Type" },
+                    React.createElement("option", { value: "" }, "What best describes you?"),
+                    React.createElement("option", { value: "STUDENT" }, "Student"),
+                    React.createElement("option", { value: "INSTRUCTOR" }, "Teacher"),
+                    React.createElement("option", { value: "PARENT" }, "Parent"),
+                    remspect.isControl("condenseRegGoals") && React.createElement("option", { value: "TUTOR" }, "Tutor")),
+                React.createElement("a", { ref: createAccountButton, className: "btn btn-cta btn-block", "data-target": "#partialRegFormModal", "data-toggle": "modal", "data-remote": "false", "data-user-email": email, "data-user-type": userType, "data-skip-pre-filled-questions": true, "data-cname": "home_cta_bar_submit_modal", "test-id": "home_cta_bar_submit_modal" }, "Create an account")));
+    };
+    exports.CreateAccountBar = CreateAccountBar;
+});
+
+//# sourceMappingURL=CreateAccountBar.js.map

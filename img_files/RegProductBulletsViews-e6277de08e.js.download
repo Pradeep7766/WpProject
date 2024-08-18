@@ -1,0 +1,615 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+define(["require", "exports", "components/CollapsibleAutoSizeComponent", "mobx-react", "react", "registration/reg-form/reg-form-utils", "util/marketing-constants.util", "util/remspect", "testPrep/testPrepTestNames", "logging/visible/react-track-visible"], function (require, exports, CollapsibleAutoSizeComponent_1, mobx_react_1, React, reg_form_utils_1, marketing_constants_util_1, Remspect, testPrepTestNames_1, react_track_visible_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.MobileProductBullets = exports.ProductBulletsView = void 0;
+    exports.ProductBulletsView = (0, mobx_react_1.observer)((function (_super) {
+        __extends(_ProductBulletsView, _super);
+        function _ProductBulletsView(props) {
+            return _super.call(this, props) || this;
+        }
+        Object.defineProperty(_ProductBulletsView.prototype, "render", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var _a;
+                var app = this.props.app;
+                var bulletParams = {
+                    textIdentifier: new reg_form_utils_1.ProductBulletUtil(app.registrationData).calculateProductBulletTextIdentifierForProduct(),
+                    lastViewedAnswerCategory: app.lastViewedStudyAnswerCategory,
+                    productDisplayName: getProductDisplayName(app.registrationData),
+                    productKey: app.registrationData.product,
+                    hasSelectedPaidTrial: app.registrationData.hasSelectedPaidTrial,
+                    bulletTextProductName: getProductNameForBulletText(app.registrationData),
+                };
+                var institutionName = (_a = app.product) === null || _a === void 0 ? void 0 : _a.institutionName;
+                var textIdentifier = bulletParams.textIdentifier;
+                return (React.createElement(React.Fragment, null,
+                    React.createElement("div", { className: "bullet-container " }, !institutionName &&
+                        React.createElement("div", { className: "non-institution-inner-container" }, textIdentifier &&
+                            React.createElement("div", null,
+                                React.createElement(ProductBulletsInnerView, { params: bulletParams }))))));
+            }
+        });
+        return _ProductBulletsView;
+    }(React.Component)));
+    var ProductBulletsInnerView = (0, mobx_react_1.observer)((function (_super) {
+        __extends(_ProductBulletsInnerView, _super);
+        function _ProductBulletsInnerView(props) {
+            return _super.call(this, props) || this;
+        }
+        Object.defineProperty(_ProductBulletsInnerView.prototype, "render", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var _a = this.props.params, textIdentifier = _a.textIdentifier, productDisplayName = _a.productDisplayName, bulletTextProductName = _a.bulletTextProductName, lastViewedAnswerCategory = _a.lastViewedAnswerCategory, hasSelectedPaidTrial = _a.hasSelectedPaidTrial;
+                var mcInstance = marketing_constants_util_1.MarketingConstantsUtil.instance();
+                return (React.createElement("div", null,
+                    React.createElement("div", null,
+                        textIdentifier === 'new-student-expert-product-bullets' &&
+                            React.createElement("div", { "test-id": "new_student_expert_product_bullets", "data-cname": "new_student_expert_product_bullets", ref: (0, react_track_visible_1.trackingRef)() },
+                                React.createElement("hr", { className: "cart-hr" }),
+                                React.createElement("h6", null, "Your Plan Includes"),
+                                React.createElement("ul", null,
+                                    React.createElement("li", null,
+                                        React.createElement("div", null,
+                                            "Step-by-step solutions to over ",
+                                            React.createElement("span", null, mcInstance.copyValues["studyAnswersCount"]),
+                                            "+ practice problems")),
+                                    React.createElement("li", null,
+                                        React.createElement("div", null, "24/7 expert help with any question if you get stuck")),
+                                    React.createElement("li", null,
+                                        React.createElement("div", null, "An engaging video lesson on each Study Answer to improve your understanding")),
+                                    React.createElement("li", null,
+                                        React.createElement("div", null, "Free mobile app to help you study anywhere, anytime"))),
+                                React.createElement("div", { className: "experts-online", "data-cname": "answers_cart_experts_access", "test-id": "answers_cart_experts_access", ref: (0, react_track_visible_1.trackingRef)() },
+                                    React.createElement("div", { className: "experts-online__image" },
+                                        React.createElement("img", { src: "/images/studyAnswers/experts.png" })),
+                                    React.createElement("div", { className: "experts-online__text" },
+                                        "Access a network of 1,000+",
+                                        lastViewedAnswerCategory ?
+                                            React.createElement("span", null,
+                                                React.createElement("span", null, " " + lastViewedAnswerCategory + " ")) : " ",
+                                        "experts"))),
+                        textIdentifier === 'tutoring-reg-bullets' &&
+                            React.createElement("div", { "test-id": "tutoring_reg_bullets", "data-cname": "tutoring_reg_bullets", ref: (0, react_track_visible_1.trackingRef)() },
+                                React.createElement("hr", { className: "cart-hr" }),
+                                React.createElement("h6", null, "Your Plan Includes"),
+                                React.createElement("ul", null,
+                                    React.createElement("li", null,
+                                        React.createElement("div", null, "Personalized, step-by-step feedback and answers for any question")),
+                                    React.createElement("li", null,
+                                        React.createElement("div", null, "Flexible and stress-free tutoring options: chat live, schedule for later, or send a message")),
+                                    React.createElement("li", null,
+                                        React.createElement("div", null, "Unlimited access to millions of homework questions and answers")),
+                                    React.createElement("li", null,
+                                        React.createElement("div", null, "Access to all premium features on Study.com, including practice tests, video lessons, and more"))),
+                                React.createElement("div", { className: "experts-online", "data-cname": "answers_cart_experts_access", "test-id": "answers_cart_experts_access", ref: (0, react_track_visible_1.trackingRef)() },
+                                    React.createElement("div", { className: "experts-online__image" },
+                                        React.createElement("img", { src: "/images/studyAnswers/experts.png" })),
+                                    React.createElement("div", { className: "experts-online__text" },
+                                        "Access a network of 1,000+",
+                                        lastViewedAnswerCategory ?
+                                            React.createElement("span", null,
+                                                React.createElement("span", null, " " + lastViewedAnswerCategory + " ")) : " ",
+                                        "experts"))),
+                        textIdentifier === 'new-student-other-basic-bullets' &&
+                            React.createElement("div", { className: "new-student-other-basic-bullets", "test-id": "new_student-other-basic-bullets", "data-cname": "new_student-other-basic-bullets", ref: (0, react_track_visible_1.trackingRef)() },
+                                React.createElement("hr", { className: "cart-hr" }),
+                                React.createElement("h6", null, "Your Plan Includes"),
+                                React.createElement("ul", null,
+                                    React.createElement("li", null,
+                                        "Over ",
+                                        React.createElement("span", null, mcInstance.copyValues["lessonCount"]),
+                                        " video and text lessons covering all subjects and grade levels"),
+                                    React.createElement("li", null,
+                                        React.createElement("div", null,
+                                            "Step-by-step solutions to ",
+                                            React.createElement("span", null, mcInstance.copyValues["studyAnswersCount"]),
+                                            "+ practice problems")),
+                                    React.createElement("li", null,
+                                        React.createElement("div", null, "24/7 expert help with any question if you get stuck")),
+                                    React.createElement("li", null,
+                                        React.createElement("div", null, "Free mobile app to help you study anywhere, anytime"))),
+                                React.createElement("div", { className: "experts-online", "data-cname": "answers_cart_experts_access", "test-id": "answers_cart_experts_access", ref: (0, react_track_visible_1.trackingRef)() },
+                                    React.createElement("div", { className: "experts-online__image" },
+                                        React.createElement("img", { src: "/images/studyAnswers/experts.png" })),
+                                    React.createElement("div", { className: "experts-online__text" },
+                                        "Access a network of 1,000+",
+                                        lastViewedAnswerCategory ?
+                                            React.createElement("span", null,
+                                                React.createElement("span", null, " " + lastViewedAnswerCategory + " ")) : " ",
+                                        "experts"))),
+                        textIdentifier === 'classroom-teacher-product-bullets' &&
+                            React.createElement("div", { "test-id": "classroom_teacher_product_bullets", "data-cname": "classroom_teacher_product_bullets", ref: (0, react_track_visible_1.trackingRef)() },
+                                React.createElement("hr", { className: "cart-hr" }),
+                                React.createElement("h6", null, "Your Plan Includes"),
+                                React.createElement("ul", { "data-cname": "classroom_teacher_product_bullets_list" },
+                                    React.createElement("li", null,
+                                        React.createElement("span", null, mcInstance.copyValues["videoLessonCount"]),
+                                        " streaming videos to use in the classroom"),
+                                    React.createElement("li", null,
+                                        React.createElement("span", null, mcInstance.copyValues["teacherResourcesCount"]),
+                                        " rich lesson plans, activities, games, project ideas, and more to supplement your lessons"),
+                                    React.createElement("li", null,
+                                        React.createElement("span", null, mcInstance.copyValues["englishLanguageLearnerResources"]),
+                                        " English Language Learner Resources"),
+                                    React.createElement("li", null, "Create classrooms and assign homework, lessons or quizzes to your students"),
+                                    React.createElement("li", null, "Google Single Sign On"),
+                                    React.createElement("li", null, "Printable invoices"),
+                                    React.createElement("li", null, "Download videos"),
+                                    React.createElement("li", null, "Mobile app"))),
+                        textIdentifier === 'teacher-product-bullets' &&
+                            React.createElement("div", { "test-id": "teacher_product_bullets", "data-cname": "teacher_product_bullets", ref: (0, react_track_visible_1.trackingRef)() },
+                                React.createElement("hr", { className: "cart-hr" }),
+                                React.createElement("h6", null, "Your Plan Includes"),
+                                React.createElement("ul", { "data-cname": "teacher_product_bullets" },
+                                    React.createElement("li", null,
+                                        React.createElement("span", null, mcInstance.copyValues["videoLessonCount"]),
+                                        " streaming videos to use in the classroom"),
+                                    React.createElement("li", null,
+                                        React.createElement("span", null, mcInstance.copyValues["teacherResourcesCount"]),
+                                        " rich lesson plans, activities, games, project ideas, and more to supplement your lessons"),
+                                    React.createElement("li", null,
+                                        React.createElement("span", null, mcInstance.copyValues["englishLanguageLearnerResources"]),
+                                        " English Language Learner Resources"),
+                                    React.createElement("li", null, "Create classrooms and assign homework, lessons or quizzes to your students"),
+                                    React.createElement("li", null, "Chapter Practice Exams, Worksheets"),
+                                    React.createElement("li", null, "Google Single Sign On"),
+                                    React.createElement("li", null, "Printable invoices"),
+                                    React.createElement("li", null, "Download videos"),
+                                    React.createElement("li", null, "Mobile app"))),
+                        textIdentifier === 'homeschool-product-bullets' &&
+                            React.createElement("div", { "test-id": "homeschool_product_bullets", "data-cname": "homeschool_product_bullets", ref: (0, react_track_visible_1.trackingRef)() },
+                                React.createElement("hr", { className: "cart-hr" }),
+                                React.createElement("h6", null, "Your Plan Includes"),
+                                React.createElement("ul", { "data-cname": "homeschool_product_bullets" },
+                                    React.createElement("li", null, "Comprehensive core subject and grade levels"),
+                                    React.createElement("li", null,
+                                        React.createElement("span", null, mcInstance.copyValues["videoLessonCount"]),
+                                        "+ short, interactive video lessons"),
+                                    React.createElement("li", null, "AP, CLEP, & remedial courses"),
+                                    React.createElement("li", null, "Quizzes and tests with automatic grading"),
+                                    React.createElement("li", null, "Flashcards and transcripts for review"),
+                                    React.createElement("li", null, "Mobile app with downloadable lessons"),
+                                    React.createElement("li", null, "On-demand help from expert instructors"),
+                                    React.createElement("li", null, "Complex subjects (like calculus) made easy"),
+                                    React.createElement("li", null, "Detailed goal tracking and progress reporting"),
+                                    React.createElement("li", null, "Certificates of Completion"),
+                                    React.createElement("li", null,
+                                        "Used by over ",
+                                        React.createElement("span", null, mcInstance.copyValues["parentCount"]),
+                                        " families"))),
+                        textIdentifier === 'family-plan-product-bullets' &&
+                            React.createElement("div", { "test-id": "family_plan_bullets", "data-cname": "family_plan_bullets", ref: (0, react_track_visible_1.trackingRef)(), className: "family-plan-bullets" },
+                                React.createElement("hr", { className: "cart-hr" }),
+                                React.createElement("h6", null, "Family Plan pricing and billing"),
+                                React.createElement(FamilyPlanProductBulletsView, { params: this.props.params })),
+                        textIdentifier === 'cx-reg-bullets' &&
+                            React.createElement(CXProductBulletsView, { mcInstance: mcInstance, hasSelectedPaidTrial: hasSelectedPaidTrial }),
+                        textIdentifier === 'test-prep-reg-bullets' &&
+                            React.createElement("div", { "data-cname": "test-prep-reg-bullets-outer", "data-track-remspect": "testPrepBullets", ref: (0, react_track_visible_1.trackingRef)() },
+                                Remspect.isVariation("gryphsTestPrepBullets", "old") &&
+                                    React.createElement("div", { "test-id": "test-prep-reg-bullets", "data-cname": "test-prep-reg-bullets", ref: (0, react_track_visible_1.trackingRef)() },
+                                        React.createElement("hr", { className: "cart-hr" }),
+                                        React.createElement("h6", null, "Your Plan Includes"),
+                                        React.createElement("ul", null,
+                                            React.createElement("li", null, "Engaging lessons that cover every part of the exam to help you get your best score"),
+                                            React.createElement("li", null, "Unlimited practice tests so you're completely confident on test day"),
+                                            React.createElement("li", null, "Full transcripts of each lesson"),
+                                            React.createElement("li", null, "Free mobile app with video downloads so you can study anywhere and anytime"),
+                                            React.createElement("li", null, "Get help from experts if you are stuck"))),
+                                Remspect.isVariation("gryphsTestPrepBullets", "new") &&
+                                    React.createElement("div", { "test-id": "test-prep-reg-bullets", "data-cname": "test-prep-reg-bullets", ref: (0, react_track_visible_1.trackingRef)() },
+                                        React.createElement("hr", { className: "cart-hr" }),
+                                        React.createElement("h6", null, "Your Plan Includes"),
+                                        React.createElement("ul", null,
+                                            React.createElement("li", null,
+                                                React.createElement("strong", null, "Expert help \u2014"),
+                                                " Ready online in case you get stuck"),
+                                            React.createElement("li", null,
+                                                React.createElement("strong", null, "Comprehensive prep \u2014"),
+                                                " Practice questions, diagnostic tests, video/text lessons, flashcards, study guides, and more"),
+                                            React.createElement("li", null,
+                                                React.createElement("strong", null, "Realistic practice \u2014"),
+                                                " Hundreds of practice questions matched to actual test questions"),
+                                            React.createElement("li", null,
+                                                React.createElement("strong", null, "Save time and effort \u2014"),
+                                                " Assessments to identify areas of focus and a progress dashboard to keep you on track"),
+                                            React.createElement("li", null,
+                                                React.createElement("strong", null, "Review on the go \u2014"),
+                                                " Car-audio mode, printouts, and download for later in addition to desktop and mobile"),
+                                            React.createElement("li", null,
+                                                React.createElement("strong", null, "Guaranteed \u2014"),
+                                                " Score higher or your money back")))),
+                        textIdentifier === 'test-prep-tutoring-reg-bullets' &&
+                            React.createElement("div", { "test-id": "praxis_test_prep_tutoring_reg_bullets", "data-cname": "praxis_test_prep_tutoring_reg_bullets", ref: (0, react_track_visible_1.trackingRef)() },
+                                React.createElement("hr", { className: "cart-hr" }),
+                                React.createElement("h6", null, productDisplayName),
+                                React.createElement("ul", null,
+                                    React.createElement("li", null,
+                                        React.createElement("b", null, "One-on-one tutoring:"),
+                                        " Enjoy four online tutoring sessions per month"),
+                                    React.createElement("li", null,
+                                        React.createElement("b", null, "Personalized study plan:"),
+                                        " Receive custom recommendations from our tutors"),
+                                    React.createElement("li", null,
+                                        React.createElement("b", null, "Access to:"),
+                                        " ",
+                                        bulletTextProductName,
+                                        " courses, video lessons, and practice tests to identify areas of weakness and strength"))),
+                        textIdentifier === 'non-test-prep-tutoring-reg-bullets' &&
+                            React.createElement("div", { "test-id": "praxis_reg_bullets", "data-cname": "praxis_reg_bullets", ref: (0, react_track_visible_1.trackingRef)() },
+                                React.createElement("hr", { className: "cart-hr" }),
+                                React.createElement("h6", null, productDisplayName),
+                                React.createElement("ul", null,
+                                    React.createElement("li", null,
+                                        React.createElement("b", null, "Access to:"),
+                                        " ",
+                                        bulletTextProductName,
+                                        " courses, video lessons, and practice tests to identify areas of weakness and strength"))))));
+            }
+        });
+        return _ProductBulletsInnerView;
+    }(React.Component)));
+    var getCxProductBullets = function (mcInstance, isMobile) {
+        var productBullets;
+        if (Remspect.isControl("cxSocialProof")) {
+            productBullets = [
+                !isMobile ?
+                    React.createElement(React.Fragment, null,
+                        "Earn transferrable credits for ",
+                        React.createElement("span", null,
+                            mcInstance.copyValues["transferableSchoolCount"],
+                            "+"),
+                        " colleges")
+                    : React.createElement(React.Fragment, null,
+                        "Earn transferrable credits for ",
+                        mcInstance.copyValues["transferableSchoolCount"],
+                        "+ colleges"),
+                !isMobile ?
+                    React.createElement(React.Fragment, null,
+                        "Expanded library of ",
+                        React.createElement("span", null,
+                            mcInstance.copyValues["aceCourseCount"],
+                            "+"),
+                        " upper & lower-division courses")
+                    : React.createElement(React.Fragment, null,
+                        "Expanded library of ",
+                        mcInstance.copyValues["aceCourseCount"],
+                        "+ upper & lower-division courses"),
+                React.createElement(React.Fragment, null, "Coaching assistance for degree and course planning"),
+                React.createElement(React.Fragment, null, "Short, animated video lessons and quizzes"),
+                React.createElement(React.Fragment, null, "Course progress tracking and scheduling"),
+                React.createElement(React.Fragment, null, "Study anytime, anywhere! Access your courses from a desktop or mobile device"),
+                React.createElement(React.Fragment, null, "Flexible monthly plan you can stop and start anytime")
+            ];
+        }
+        else {
+            productBullets = [
+                !isMobile ?
+                    React.createElement(React.Fragment, null,
+                        "Earn easily transferrable credits for ",
+                        React.createElement("span", null,
+                            mcInstance.copyValues["transferableSchoolCount"],
+                            "+"),
+                        " colleges")
+                    : React.createElement(React.Fragment, null,
+                        "Earn easily transferrable credits for ",
+                        mcInstance.copyValues["transferableSchoolCount"],
+                        "+ colleges"),
+                !isMobile ?
+                    React.createElement(React.Fragment, null,
+                        "Full access to ",
+                        React.createElement("span", null,
+                            mcInstance.copyValues["aceCourseCount"],
+                            "+"),
+                        " upper & lower-division courses")
+                    : React.createElement(React.Fragment, null,
+                        "Full access to ",
+                        mcInstance.copyValues["aceCourseCount"],
+                        "+ upper & lower-division courses"),
+                React.createElement(React.Fragment, null, "Study anytime, anywhere on your desktop, phone, and mobile app"),
+                React.createElement(React.Fragment, null, "Coaching assistance for degree and course planning"),
+                React.createElement(React.Fragment, null, "Flexible monthly plan you can stop and start anytime"),
+                React.createElement(React.Fragment, null, "Save countless hours and thousands of dollars in college tuition")
+            ];
+        }
+        return productBullets;
+    };
+    var CXProductBulletsView = function (_a) {
+        var mcInstance = _a.mcInstance, hasSelectedPaidTrial = _a.hasSelectedPaidTrial;
+        var productBullets = getCxProductBullets(mcInstance);
+        return React.createElement("div", { "test-id": "cx-reg-bullets", "data-cname": "cx-reg-bullets", ref: (0, react_track_visible_1.trackingRef)(), className: "cx-reg-bullets" },
+            React.createElement("hr", { className: "cart-hr" }),
+            React.createElement("h6", null, "Your Plan Includes"),
+            React.createElement("ul", { "data-cname": "cx-reg-bullets" }, productBullets.map(function (bullet, index) { return React.createElement("li", { key: index }, bullet); })),
+            hasSelectedPaidTrial &&
+                React.createElement("div", { className: "paid-trial-cx-disclaimer" },
+                    React.createElement("i", null, "Note: Proctored exams require full membership activation.")));
+    };
+    var FamilyPlanProductBulletsView = (0, mobx_react_1.observer)((function (_super) {
+        __extends(_ProductBulletsInnerView, _super);
+        function _ProductBulletsInnerView(props) {
+            return _super.call(this, props) || this;
+        }
+        Object.defineProperty(_ProductBulletsInnerView.prototype, "render", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var _a = this.props.params, productDisplayName = _a.productDisplayName, productKey = _a.productKey, hasSelectedPaidTrial = _a.hasSelectedPaidTrial;
+                var mcInstance = marketing_constants_util_1.MarketingConstantsUtil.instance();
+                return (React.createElement("ul", null,
+                    React.createElement("li", null, "Free parent account. Oversee one or more separate student accounts"),
+                    React.createElement("li", null,
+                        "One student ",
+                        React.createElement("span", null, productDisplayName),
+                        " account. Add additional accounts after sign up"),
+                    !Remspect.isControl("homeschoolUserType") ?
+                        React.createElement(React.Fragment, null, productKey.indexOf('ACCELERATOR') > -1 ?
+                            React.createElement("div", null,
+                                React.createElement("li", null,
+                                    "Over ",
+                                    React.createElement("span", null, mcInstance.copyValues["aceCourseCount"]),
+                                    " lower & upper-division courses"),
+                                React.createElement("li", null,
+                                    "Transferable to over ",
+                                    React.createElement("span", null, mcInstance.copyValues["transferableSchoolCount"]),
+                                    " colleges"),
+                                React.createElement("li", null, "Flexible from your phone or computer, anytime, anywhere"),
+                                React.createElement("li", null, "Save time by skipping what you know"),
+                                React.createElement("li", null, "Short, animated video lessons and quizzes"),
+                                React.createElement("li", null, "Ask questions and get help if you get stuck"),
+                                !hasSelectedPaidTrial && React.createElement("li", null, "Easy to start and stop to fit your life"),
+                                React.createElement("li", null, "Save thousands on tuition, no expensive textbooks or extra fees")) :
+                            React.createElement("div", null,
+                                React.createElement("li", null, "Easily view each student's lesson progress and quiz scores"),
+                                React.createElement("li", null, "Enroll individual students in courses and set study goals"),
+                                React.createElement("li", null, "Document course completion"),
+                                React.createElement("li", null, "Receive weekly status updates in email"))) :
+                        React.createElement(React.Fragment, null,
+                            React.createElement("li", null, "Easily view each student's lesson progress and quiz scores"),
+                            React.createElement("li", null, "Enroll individual students in courses and set study goals"),
+                            React.createElement("li", null, "Document course completion"),
+                            React.createElement("li", null, "Receive weekly status updates in email"))));
+            }
+        });
+        return _ProductBulletsInnerView;
+    }(React.Component)));
+    var MobileProductBulletsInternal = (0, mobx_react_1.observer)((function (_super) {
+        __extends(_MobileProductBulletsInternal, _super);
+        function _MobileProductBulletsInternal(props) {
+            var _this = _super.call(this, props) || this;
+            _this.state = {
+                showAllBullets: false
+            };
+            return _this;
+        }
+        Object.defineProperty(_MobileProductBulletsInternal.prototype, "render", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var _this = this;
+                var app = this.props.app;
+                var regData = app.registrationData;
+                var bulletTextIdentifier = this.props.bulletTextIdentifier;
+                var mcInstance = marketing_constants_util_1.MarketingConstantsUtil.instance();
+                var bulletTextProductName = getProductNameForBulletText(regData);
+                var viewMoreLinkClass = "view-more-bullets ".concat(this.state.showAllBullets ? '' : 'collapsed');
+                return React.createElement("div", { className: "mobile-product-bullets" },
+                    bulletTextIdentifier === 'cx-reg-bullets' &&
+                        React.createElement(CxMobileProductBullets, { viewMoreLinkClass: viewMoreLinkClass, mcInstance: mcInstance, showAllBullets: this.state.showAllBullets, setShowAllBullets: function () { return _this.setState({ showAllBullets: !_this.state.showAllBullets }); }, regData: regData }),
+                    bulletTextIdentifier === 'new-student-expert-product-bullets' && React.createElement("div", { "test-id": "new_student_expert_product_bullets_mobile", "data-cname": "new_student_expert_product_bullets_mobile", ref: (0, react_track_visible_1.trackingRef)() },
+                        React.createElement("hr", { className: "cart-hr" }),
+                        React.createElement("h6", null, "Your Plan Includes"),
+                        React.createElement("ul", null,
+                            React.createElement("li", null,
+                                React.createElement("div", null,
+                                    "Step-by-step solutions to ",
+                                    mcInstance.copyValues["studyAnswersCount"],
+                                    "+ practice problems")),
+                            React.createElement("li", null,
+                                React.createElement("div", null, "24/7 expert help with any question if you get stuck"))),
+                        React.createElement(CollapsibleAutoSizeComponent_1.CollapsibleAutoSizeComponent, { collapsed: !this.state.showAllBullets },
+                            React.createElement("div", { id: "student-expert-mobile-reg-bullets-hidden" },
+                                React.createElement("ul", null,
+                                    React.createElement("li", null,
+                                        React.createElement("div", null, "An engaging video lesson on each Study Answer to improve your understanding")),
+                                    React.createElement("li", null,
+                                        React.createElement("div", null, "Free mobile app to help you study anywhere, anytime"))),
+                                React.createElement("div", { className: "experts-online", "data-cname": "answers_cart_experts_access", "test-id": "answers_cart_experts_access", ref: (0, react_track_visible_1.trackingRef)() },
+                                    React.createElement("div", { className: "experts-online__image" },
+                                        React.createElement("img", { src: "/images/studyAnswers/experts.png" })),
+                                    React.createElement("div", { className: "experts-online__text" },
+                                        "Access a network of 1,000+ ",
+                                        app.lastViewedStudyAnswerCategory && React.createElement("span", null,
+                                            React.createElement("span", null, app.lastViewedStudyAnswerCategory)),
+                                        " experts")))),
+                        React.createElement("div", { className: viewMoreLinkClass, onClick: function () { return _this.setState({ showAllBullets: !_this.state.showAllBullets }); } },
+                            "View ",
+                            React.createElement("span", { className: "more-span" },
+                                "More ",
+                                React.createElement("span", { className: "icon icon-angle-down" })),
+                            React.createElement("span", { className: "less-span" },
+                                "Less ",
+                                React.createElement("span", { className: "icon icon-angle-up" }))),
+                        React.createElement("hr", { className: "cart-hr" })),
+                    bulletTextIdentifier === 'test-prep-reg-bullets' && React.createElement("div", { "test-id": "test-prep-reg-bullets-mobile", "data-cname": "test-prep-reg-bullets-mobile", "data-track-remspect": "testPrepBullets", ref: (0, react_track_visible_1.trackingRef)() },
+                        Remspect.isControl("gryphsTestPrepBullets") && React.createElement(React.Fragment, null,
+                            React.createElement("hr", { className: "cart-hr" }),
+                            React.createElement("h6", null, "Your Plan Includes"),
+                            React.createElement("ul", { "data-cname": "test-prep-reg-bullets-mobile-control", ref: (0, react_track_visible_1.trackingRef)() },
+                                React.createElement("li", null, "Engaging lessons that cover every part of the exam to help you get your best score"),
+                                React.createElement("li", null, "Unlimited practice tests so you're completely confident on test day")),
+                            React.createElement(CollapsibleAutoSizeComponent_1.CollapsibleAutoSizeComponent, { collapsed: !this.state.showAllBullets },
+                                React.createElement("ul", { id: "test-prep-mobile-reg-bullets-hidden" },
+                                    React.createElement("li", null, "Full transcripts of each lesson"),
+                                    React.createElement("li", null, "Free mobile app with video downloads so you can study anywhere and anytime"),
+                                    React.createElement("li", null, "Get help from experts if you are stuck"))),
+                            React.createElement("div", { className: viewMoreLinkClass, onClick: function () { return _this.setState({ showAllBullets: !_this.state.showAllBullets }); }, "data-cname": "mobile_reg_bullets_toggle", ref: (0, react_track_visible_1.trackingRef)() },
+                                "View ",
+                                React.createElement("span", { className: "more-span" },
+                                    "More ",
+                                    React.createElement("span", { className: "icon icon-angle-down" })),
+                                React.createElement("span", { className: "less-span" },
+                                    "Less ",
+                                    React.createElement("span", { className: "icon icon-angle-up" }))),
+                            React.createElement("hr", { className: "cart-hr" })),
+                        Remspect.isVariation("gryphsTestPrepBullets", "new") && React.createElement(React.Fragment, null,
+                            React.createElement("hr", { className: "cart-hr" }),
+                            React.createElement("h6", null, "Your Plan Includes"),
+                            React.createElement("ul", { "test-id": "test-id=test_prep_bullets_v2", "data-cname": "test-prep-reg-bullets-mobile-v2", ref: (0, react_track_visible_1.trackingRef)() },
+                                React.createElement("li", null,
+                                    React.createElement("strong", null, "Comprehensive prep \u2014"),
+                                    " Practice questions, diagnostic tests, video/text lessons, flashcards, study guides, and more"),
+                                React.createElement("li", null,
+                                    React.createElement("strong", null, "Expert help \u2014"),
+                                    " Ready online in case you get stuck")),
+                            React.createElement(CollapsibleAutoSizeComponent_1.CollapsibleAutoSizeComponent, { collapsed: !this.state.showAllBullets },
+                                React.createElement("ul", { id: "test-prep-mobile-reg-bullets-hidden" },
+                                    React.createElement("li", null,
+                                        React.createElement("strong", null, "Realistic practice \u2014"),
+                                        " Hundreds of practice questions matched to actual test questions"),
+                                    React.createElement("li", null,
+                                        React.createElement("strong", null, "Save time and effort \u2014"),
+                                        " Assessments to identify areas of focus and a progress dashboard to keep you on track"),
+                                    React.createElement("li", null,
+                                        React.createElement("strong", null, "Review on the go \u2014"),
+                                        " Car-audio mode, printouts, and download for later in addition to desktop and mobile"),
+                                    React.createElement("li", null,
+                                        React.createElement("strong", null, "Guaranteed \u2014"),
+                                        " Score higher or your money back"))),
+                            React.createElement("div", { className: viewMoreLinkClass, onClick: function () { return _this.setState({ showAllBullets: !_this.state.showAllBullets }); }, "data-cname": "mobile_reg_bullets_toggle", ref: (0, react_track_visible_1.trackingRef)() },
+                                "View ",
+                                React.createElement("span", { className: "more-span" },
+                                    "More ",
+                                    React.createElement("span", { className: "icon icon-angle-down" })),
+                                React.createElement("span", { className: "less-span" },
+                                    "Less ",
+                                    React.createElement("span", { className: "icon icon-angle-up" }))),
+                            React.createElement("hr", { className: "cart-hr" }))),
+                    bulletTextIdentifier === 'test-prep-tutoring-reg-bullets' && React.createElement("div", null,
+                        React.createElement("h6", null, "Your Plan Includes"),
+                        React.createElement("ul", null,
+                            React.createElement("li", null,
+                                React.createElement("b", null, "One-on-one tutoring:"),
+                                " Enjoy four online tutoring sessions per month"),
+                            React.createElement("li", null,
+                                React.createElement("b", null, "Personalized study plan:"),
+                                " Receive custom recommendations from our tutors"),
+                            React.createElement("li", null,
+                                React.createElement("b", null, "Access to:"),
+                                " ",
+                                bulletTextProductName,
+                                " courses, video lessons, and practice tests to identify areas of weakness and strength")),
+                        React.createElement("hr", { className: "cart-hr" })),
+                    bulletTextIdentifier === 'non-test-prep-tutoring-reg-bullets' && React.createElement("div", null,
+                        React.createElement("h6", null, "Your Plan Includes"),
+                        React.createElement("ul", null,
+                            React.createElement("li", null,
+                                React.createElement("b", null, "Access to:"),
+                                " ",
+                                bulletTextProductName,
+                                " courses, video lessons, and practice tests to identify areas of weakness and strength")),
+                        React.createElement("hr", { className: "cart-hr" })));
+            }
+        });
+        return _MobileProductBulletsInternal;
+    }(React.Component)));
+    exports.MobileProductBullets = (0, mobx_react_1.observer)(function (props) {
+        var _a, _b;
+        var app = props.app;
+        var regData = app.registrationData;
+        var bulletTextIdentifier = new reg_form_utils_1.ProductBulletUtil(regData).calculateProductBulletTextIdentifierForProduct();
+        return React.createElement(React.Fragment, null,
+            React.createElement("div", { className: "mobile-product-bullets--container" }, (bulletTextIdentifier === 'cx-reg-bullets'
+                || bulletTextIdentifier === 'new-student-expert-product-bullets'
+                || bulletTextIdentifier === 'test-prep-reg-bullets'
+                || bulletTextIdentifier === 'test-prep-tutoring-reg-bullets'
+                || bulletTextIdentifier === 'non-test-prep-tutoring-reg-bullets') &&
+                React.createElement("div", { "data-cname": "mobile_reg_bullets", "test-id": "mobile_reg_bullets", ref: (0, react_track_visible_1.trackingRef)() },
+                    ((_a = app.product) === null || _a === void 0 ? void 0 : _a.key.indexOf('ANSWERS')) !== -1 && React.createElement("div", null,
+                        React.createElement(MobileProductBulletsInternal, { app: app, bulletTextIdentifier: bulletTextIdentifier })),
+                    ((_b = app.product) === null || _b === void 0 ? void 0 : _b.key.indexOf('ANSWERS')) === -1 &&
+                        React.createElement(MobileProductBulletsInternal, { app: app, bulletTextIdentifier: bulletTextIdentifier }))));
+    });
+    var CxMobileProductBullets = (0, mobx_react_1.observer)(function (props) {
+        var viewMoreLinkClass = props.viewMoreLinkClass, mcInstance = props.mcInstance, regData = props.regData, showAllBullets = props.showAllBullets, setShowAllBullets = props.setShowAllBullets;
+        var productBullets = getCxProductBullets(mcInstance, true);
+        return React.createElement("div", { "test-id": "cx-reg-bullets-mobile", "data-cname": "cx-reg-bullets-mobile", ref: (0, react_track_visible_1.trackingRef)() },
+            React.createElement("hr", { className: "cart-hr" }),
+            React.createElement("h6", null, "Your Plan Includes"),
+            React.createElement("ul", null, productBullets.slice(0, 2).map(function (bullet, index) { return React.createElement("li", { key: index }, bullet); })),
+            React.createElement(CollapsibleAutoSizeComponent_1.CollapsibleAutoSizeComponent, { collapsed: !showAllBullets },
+                React.createElement("ul", { id: "cx-mobile-reg-bullets-hidden" }, productBullets.slice(2, productBullets.length).map(function (bullet, index) { return React.createElement("li", { key: index }, bullet); }))),
+            React.createElement("div", { className: viewMoreLinkClass, onClick: function () { return setShowAllBullets(); } },
+                "View ",
+                React.createElement("span", { className: "more-span" },
+                    "More ",
+                    React.createElement("span", { className: "icon icon-angle-down" })),
+                React.createElement("span", { className: "less-span" },
+                    "Less ",
+                    React.createElement("span", { className: "icon icon-angle-up" }))),
+            regData.hasSelectedPaidTrial && React.createElement("div", { className: "paid-trial-cx-disclaimer" },
+                React.createElement("i", null, "Note: Proctored exams require full membership activation.")),
+            React.createElement("hr", { className: "cart-hr" }));
+    });
+    var getProductDisplayName = function (registrationData) {
+        if (registrationData.product === "PREMIUM" && registrationData.examName) {
+            var testName = registrationData.examName;
+            var knownTestMatch = false;
+            for (var i = 0; i < testPrepTestNames_1.testNamesList.length; i++) {
+                var lowerStr = (testPrepTestNames_1.testNamesList[i]).toLowerCase();
+                if (lowerStr === testName.toLowerCase()) {
+                    knownTestMatch = true;
+                    testName = testPrepTestNames_1.testNamesList[i];
+                    break;
+                }
+            }
+            if (knownTestMatch) {
+                return testName + " Test Prep";
+            }
+            else {
+                return "Premium Edition";
+            }
+        }
+        return "";
+    };
+    var getProductNameForBulletText = function (regData) {
+        if (regData.product) {
+            if (regData.product.indexOf("PRAXIS") > -1) {
+                return "Praxis";
+            }
+            else if (regData.product.indexOf("FTCE") > -1) {
+                return "FTCE";
+            }
+            else if (regData.product.indexOf("HESI") > -1) {
+                return "HESI";
+            }
+            else if (regData.product.indexOf("TEAS") > -1) {
+                return "TEAS";
+            }
+        }
+        return "Test Prep";
+    };
+});
+
+//# sourceMappingURL=RegProductBulletsViews.js.map

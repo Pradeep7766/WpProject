@@ -1,0 +1,212 @@
+define(["require", "exports", "jquery", "util/subdomainUrlUtil", "util/remspect"], function (require, exports, $, subdomainUrlUtil_1, remspect) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.buildRegUrl = exports.shouldShowTutoringPlanGoal = exports.determineProductFromState = exports.SUBJECTS_TO_OFFER_TUTORING_PRODUCT = void 0;
+    exports.SUBJECTS_TO_OFFER_TUTORING_PRODUCT = ["math", "chemistry", "biology", "physics", "business",
+        "history", "literature", "writing"];
+    function determineProductFromState(state) {
+        var productKey = _determineProductFromState(state);
+        return enhanceSelectedProductWithAnnual(productKey, state.currentProductBillingTerm);
+    }
+    exports.determineProductFromState = determineProductFromState;
+    function _determineProductFromState(state) {
+        if (state.productKeyOverride) {
+            return state.productKeyOverride;
+        }
+        else if (state.wantsFamilyPlan) {
+            if (state.goals === "HOMESCHOOL") {
+                return "HOMESCHOOL";
+            }
+            else if (state.userType === "HOMESCHOOLER") {
+                switch (state.goals) {
+                    case "HOME_SUPPLEMENT":
+                        return "BASIC";
+                    case "HOME_EARN_CREDIT":
+                        return "COLLEGE_ACCELERATOR";
+                    default:
+                        return "HOMESCHOOL";
+                }
+            }
+            return "PREMIUM";
+        }
+        else if (state.isSpecificTestPrep) {
+            if (state.defaultProductKey) {
+                return state.defaultProductKey;
+            }
+            console.warn("Unexpected state - could not find specific test prep product key");
+            return "TEST_PREP_AND_CERTIFICATES";
+        }
+        else if (state.defaultProductKey) {
+            return state.defaultProductKey;
+        }
+        else if (determineIfUserGetsAnswersPlanFromStudyAnswersPage(state)) {
+            return "ANSWERS";
+        }
+        else if (state.userType === "HOMESCHOOLER") {
+            switch (state.goals) {
+                case "HOME_SUPPLEMENT":
+                    return "BASIC";
+                case "HOME_EARN_CREDIT":
+                    return "COLLEGE_ACCELERATOR";
+                default:
+                    return "HOMESCHOOL";
+            }
+        }
+        else if (state.userType === "STUDENT") {
+            switch (state.goals) {
+                case "STUDY":
+                    if (isPremiumProductUri() || state.landedOnCourseExamOrPractice) {
+                        return "PREMIUM";
+                    }
+                    return "BASIC";
+                case "EXAM_PREP":
+                    return "PREMIUM";
+                case "IN_CLASS_EXAM":
+                    return "PREMIUM";
+                case "EARN_CREDIT":
+                    return "COLLEGE_ACCELERATOR";
+                case "STANDARD_EXAM_PREP":
+                    return "TEST_PREP_AND_CERTIFICATES";
+                case "HOMESCHOOL":
+                    return "HOMESCHOOL";
+                case "OTHER":
+                    if (isPremiumProductUri() || state.landedOnCourseExamOrPractice) {
+                        return "PREMIUM";
+                    }
+                    return "BASIC";
+                case "IMPROVE_GRADES":
+                    return "PREMIUM";
+                case "ONLINE_HOMEWORK_HELP":
+                    return "PREMIUM";
+                case "TUTORING":
+                    if (!remspect.isControl("tutorStep") || !remspect.isControl("tutoringTakeover")) {
+                        return "TUTORING";
+                    }
+                    return "PREMIUM";
+                default:
+                    return "PREMIUM";
+            }
+        }
+        else if (state.userType === "PARENT") {
+            switch (state.goals) {
+                case "HELPING_CHILD":
+                    return "PREMIUM";
+                case "CHILD_CREDIT_EXAM":
+                    return "COLLEGE_ACCELERATOR";
+                case "OTHER":
+                    return "PREMIUM";
+                case "IMPROVE_CHILD_GRADES":
+                    return "PREMIUM";
+                case "HOMESCHOOL":
+                    return "HOMESCHOOL";
+                case "DISTANCE_LEARNING":
+                    return "HOMESCHOOL";
+                case "TUTORING_CHILD":
+                    if (!remspect.isControl("tutorStep") || !remspect.isControl("tutoringTakeover")) {
+                        return "TUTORING";
+                    }
+                    return "PREMIUM";
+                default:
+                    return "PREMIUM";
+            }
+        }
+        else if (state.userType === "INSTRUCTOR") {
+            switch (state.goals) {
+                case "TEACHER_CERTIFICATION":
+                    return "TEST_PREP_AND_CERTIFICATES";
+                case "HOMESCHOOL":
+                    return "HOMESCHOOL";
+                case "PROFESSIONAL_DEVELOPMENT":
+                    return "TEACHER";
+                default:
+                    return "CLASSROOM_TEACHER";
+            }
+        }
+        else if (state.userType === "TUTOR") {
+            switch (state.goals) {
+                case "TEACHER_CERTIFICATION":
+                    return "TEST_PREP_AND_CERTIFICATES";
+                case "HOMESCHOOL":
+                    return "HOMESCHOOL";
+                case "PROFESSIONAL_DEVELOPMENT":
+                    return "TEACHER";
+                default:
+                    return "CLASSROOM_TEACHER";
+            }
+        }
+        else {
+            return "PREMIUM";
+        }
+    }
+    function enhanceSelectedProductWithAnnual(productKey, currentProductBillingTerm) {
+        if (currentProductBillingTerm === "ANNUAL") {
+            var monthlyToAnnualMap = {};
+            monthlyToAnnualMap["CLASSROOM_TEACHER"] = "CLASSROOM_TEACHER_ANNUAL";
+            monthlyToAnnualMap["TEACHER"] = "TEACHER_ANNUAL";
+            monthlyToAnnualMap["HOMESCHOOL"] = "HOMESCHOOL_ANNUAL";
+            return monthlyToAnnualMap[productKey] || productKey;
+        }
+        return productKey;
+    }
+    function determineIfUserGetsAnswersPlanFromStudyAnswersPage(state) {
+        var isStudyAnswersPage = location.href.indexOf("/explanation/") > -1 || subdomainUrlUtil_1.SubdomainUrlUtil.isRequestToSubdomain("HOMEWORK");
+        if (!isStudyAnswersPage) {
+            return false;
+        }
+        if (shouldShowTutoringPlanGoal(state) && (state.goals === "TUTORING" || state.goals === "TUTORING_CHILD")) {
+            return false;
+        }
+        if (isPremiumProductUri() || state.landedOnCourseExamOrPractice) {
+            return false;
+        }
+        if (state.goals === "TUTORING_CHILD" || state.goals === "TUTORING") {
+            return false;
+        }
+        return true;
+    }
+    function isPremiumProductUri() {
+        var uris = ["/exam/", "/academy/practice/", "/course/"];
+        return uris.some(function (uri) { return window.location.href.indexOf(uri) > -1; });
+    }
+    function shouldShowTutoringPlanGoal(state) {
+        if (!remspect.isControl("tutoringPPCUsertypeGoals") && state.product === "TUTORING") {
+            return true;
+        }
+        if (!remspect.isControl("tutorStep") || !remspect.isControl("tutoringTakeover")) {
+            if (state.isSpecificTestPrep) {
+                return false;
+            }
+            if (exports.SUBJECTS_TO_OFFER_TUTORING_PRODUCT.indexOf(state.subjectSilo) > -1 &&
+                (state.userType === "STUDENT" || state.userType === "PARENT") &&
+                (window.location.href.indexOf("/lesson") > -1 || window.location.href.indexOf("/get-started.html") > -1 ||
+                    (!remspect.isControl("tutoringTakeover") && window.location.href.indexOf("/explanation/") > -1))) {
+                return true;
+            }
+        }
+        return false;
+    }
+    exports.shouldShowTutoringPlanGoal = shouldShowTutoringPlanGoal;
+    function buildRegUrl(state) {
+        var host = subdomainUrlUtil_1.SubdomainUrlUtil.getStudyBaseUrl();
+        var url = host + "/academy/get-started.html?product=" + state.product;
+        var gscElements = $("[gsc]");
+        if (gscElements.length > 0) {
+            var gsc = gscElements[0].getAttribute("gsc");
+            url += "&gsc=" + gsc;
+        }
+        if (state.couponCode) {
+            url += "&couponCode=" + state.couponCode;
+        }
+        if (state.getFullAccessHeader) {
+            url += "&fullAccessHeader=true";
+        }
+        if ((!remspect.isControl("tutorStep") || !remspect.isControl("tutoringTakeover")) && !!state.subjectSilo && !state.isSpecificTestPrep
+            && window.location.href.indexOf("/lesson") > -1) {
+            url += "&subjectSilo=" + state.subjectSilo;
+        }
+        return url;
+    }
+    exports.buildRegUrl = buildRegUrl;
+});
+
+//# sourceMappingURL=RegProductDecider.js.map

@@ -1,0 +1,460 @@
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+define(["require", "exports", "@study-com/dynamic-form", "react-dom", "react", "@study-com/dynamic-form", "mobx", "mobx-react", "components/GenericErrorBoundary", "member/info/member-info.util", "registration/RegInfoUtil", "registration/RegProductDecider", "jquery", "registration/RegFamilyPlanUtil", "registration/RegDOMDataUtil", "registration/RegSidebarViews", "logging/visible/react-track-visible", "registration/ReactRegAppUtil", "util/remspect", "testPrep/TestPrepProductUtil"], function (require, exports, dynamic_form_1, ReactDOM, React, dynamic_form_2, mobx_1, mobx_react_1, GenericErrorBoundary_1, member_info_util_1, RegInfoUtil, RegProductDecider, $, RegFamilyPlanUtil, RegDOMDataUtil, RegSidebarViews_1, react_track_visible_1, ReactRegAppUtil_1, remspect, TestPrepProductUtil_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.TestPrepDisclaimer = exports.ReactRegModalApp = exports.initReactRegModalApp = void 0;
+    var appInstance = undefined;
+    function initReactRegModalApp(e) {
+        if (!document.querySelector("[data-partial-reg-form-modal]") && !appInstance) {
+            appInstance = new ReactRegModalApp();
+            appInstance.init();
+            appInstance.onModalOpen(e);
+        }
+    }
+    exports.initReactRegModalApp = initReactRegModalApp;
+    var ReactRegModalApp = (function () {
+        function ReactRegModalApp() {
+            Object.defineProperty(this, "form", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "memberInfoUtil", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: member_info_util_1.MemberInfoUtil.instance()
+            });
+            Object.defineProperty(this, "regMetadata", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: {}
+            });
+            Object.defineProperty(this, "dataFromReactElement", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: {}
+            });
+            (0, mobx_1.makeAutoObservable)(this);
+        }
+        Object.defineProperty(ReactRegModalApp.prototype, "saveValues", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (toSave) {
+                if (toSave === void 0) { toSave = this.registrationData; }
+                return ReactRegAppUtil_1.reactRegAppUtil.saveValues(toSave);
+            }
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "registrationData", {
+            get: function () {
+                return ReactRegAppUtil_1.reactRegAppUtil.registrationData(this);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "rawRegistrationData", {
+            get: function () {
+                return ReactRegAppUtil_1.reactRegAppUtil.rawRegistrationData(this);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "shouldShowAnswersSidebar", {
+            get: function () {
+                return ReactRegAppUtil_1.reactRegAppUtil.shouldShowAnswersSidebar(this);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "currentStudyAnswerTitle", {
+            get: function () {
+                return ReactRegAppUtil_1.reactRegAppUtil.currentStudyAnswerTitle(this);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "studyAnswerRelatedConceptName", {
+            get: function () {
+                return ReactRegAppUtil_1.reactRegAppUtil.studyAnswerRelatedConceptName(this);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "shouldShowTrackingPixels", {
+            get: function () {
+                return ReactRegAppUtil_1.reactRegAppUtil.shouldShowTrackingPixels(this);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "shouldShowFamilyPlanQuestion", {
+            get: function () {
+                return ReactRegAppUtil_1.reactRegAppUtil.shouldShowFamilyPlanQuestion(this);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "onUserTypeChange", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                return ReactRegAppUtil_1.reactRegAppUtil.onUserTypeChange(this);
+            }
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "onGoalChange", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                return ReactRegAppUtil_1.reactRegAppUtil.onGoalChange(this);
+            }
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "clearFamilyPlanDataIfNotValid", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                return ReactRegAppUtil_1.reactRegAppUtil.clearFamilyPlanDataIfNotValid(this);
+            }
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "buildFamilyPlanChangeEmailLoginUrl", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                return ReactRegAppUtil_1.reactRegAppUtil.buildFamilyPlanChangeEmailLoginUrl(this);
+            }
+        });
+        ;
+        Object.defineProperty(ReactRegModalApp.prototype, "regModalQuestions", {
+            get: function () {
+                return ReactRegAppUtil_1.reactRegAppUtil.regModalQuestions(this);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "regModalPageListDef", {
+            get: function () {
+                return ReactRegAppUtil_1.reactRegAppUtil.regModalPageListDef(this.isHighIntentRegFunnel);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "isHighIntentRegFunnel", {
+            get: function () {
+                var underTest = remspect.isVariation("highIntentRegFunnel", "v1");
+                var isHighIntentUser = !!($.cookie("highIntentURLVisited"));
+                var isPaidTrialEligible = this.memberInfoUtil.memberInfo.isPaidTrialEligible;
+                return underTest && isHighIntentUser && !isPaidTrialEligible;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "updateFormValuesAndRegMetadata", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (regDataValues) {
+                return ReactRegAppUtil_1.reactRegAppUtil.updateFormValuesAndRegMetadata(this, regDataValues);
+            }
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "buildFormStore", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var questions = this.regModalQuestions;
+                var pages = this.regModalPageListDef;
+                var formConfig = {
+                    questions: questions,
+                    layout: {
+                        pages: pages,
+                        controls: function (page, store) {
+                            return React.createElement(ReactRegAppUtil_1.reactRegAppUtil.ModalDefaultControls, { store: store });
+                        }
+                    }
+                };
+                return new dynamic_form_1.DynamicFormStore(__assign({ config: { skipInitial: false, shouldCleanNextPageOnAdvance: true, questionRefFn: react_track_visible_1.trackingRef } }, formConfig));
+            }
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "submitForm", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                ReactRegAppUtil_1.reactRegAppUtil.setTestPrepProductFromRegData(this);
+                var state = this.registrationData;
+                return this.saveValues(state).then(function () {
+                    window.location.href = RegProductDecider.buildRegUrl(state);
+                });
+            }
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "init", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var _this = this;
+                this.form = this.buildFormStore();
+                this.form.onSubmit(function () { return _this.submitForm(); });
+                var target = document.getElementById("regModalGoHere");
+                this.setDataPropertiesFromDom(target);
+                this.removeRiskFreeAttribute(target);
+                var initialRegData = RegDOMDataUtil.loadRegDataValuesFromDOM();
+                var testNameFromDOM = RegDOMDataUtil.loadDataFromSpecificTestPrepElement();
+                if (testNameFromDOM && testNameFromDOM !== "TEST_PREP_AND_CERTIFICATES") {
+                    if (initialRegData.examName == null) {
+                        initialRegData.examName = testNameFromDOM;
+                    }
+                }
+                this.updateFormValuesAndRegMetadata(initialRegData);
+                ReactDOM.render(React.createElement(RegModalView, { app: this }), target);
+                (0, mobx_1.reaction)(function () { return _this.form.values; }, function () {
+                    _this.saveValues();
+                }, {
+                    equals: mobx_1.comparer.shallow,
+                    delay: 500
+                });
+                (0, mobx_1.reaction)(function () { return _this.form.values["userType"]; }, function () {
+                    _this.onUserTypeChange();
+                }, {
+                    equals: mobx_1.comparer.shallow
+                });
+                (0, mobx_1.reaction)(function () { return _this.form.values["goals"]; }, function () {
+                    _this.onGoalChange();
+                }, {
+                    equals: mobx_1.comparer.shallow
+                });
+                (0, mobx_1.reaction)(function () { return [_this.form.values.userType, _this.form.values.goals, _this.form.values.email]; }, function () {
+                    var regData = _this.registrationData;
+                    _this.regMetadata.product = RegProductDecider.determineProductFromState(regData);
+                });
+                (0, mobx_1.autorun)(function () {
+                    var _a;
+                    if (!_this.shouldShowFamilyPlanQuestion && ((_a = _this.form) === null || _a === void 0 ? void 0 : _a.values)) {
+                        _this.form.values.wantsFamilyPlan = false;
+                    }
+                });
+                $("#partialRegFormModal").on("show.bs.modal", function (e) {
+                    _this.onModalOpen(e);
+                });
+                $("#partialRegFormModal").on("shown.bs.modal", function (e) {
+                    _this.form.allowTransitions = true;
+                });
+            }
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "setDataPropertiesFromDom", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (target) {
+                this.dataFromReactElement = ReactRegAppUtil_1.reactRegAppUtil.setDataPropertiesFromDom(target);
+            }
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "removeRiskFreeAttribute", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (target) {
+                var _a;
+                if (!!((_a = this.dataFromReactElement) === null || _a === void 0 ? void 0 : _a["remove-risk-free"])) {
+                    target.removeAttribute("data-remove-risk-free");
+                }
+            }
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "processPageCnameFromQuestion", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (questionCname) {
+                if (questionCname === "goals") {
+                    questionCname = "goal";
+                }
+                if (questionCname === "user_type") {
+                    questionCname = "usertype";
+                }
+                return "fields_" + questionCname;
+            }
+        });
+        Object.defineProperty(ReactRegModalApp.prototype, "onModalOpen", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (e) {
+                if (!remspect.isControl("testPrepCourseNameWithSocialProof")) {
+                    var curURI = window.location.pathname + window.location.search;
+                    var latestCourseRelatedUrl = $.cookie("lcru");
+                    if (decodeURI(curURI) !== latestCourseRelatedUrl) {
+                        var domain = "study.com";
+                        var hostParts = window.location.host.split(".");
+                        var numHostParts = hostParts.length;
+                        if (numHostParts > 1) {
+                            domain = hostParts[numHostParts - 2] + '.' + hostParts[numHostParts - 1];
+                        }
+                        $.cookie("lcru", null, { path: '/', domain: domain });
+                    }
+                }
+                TestPrepProductUtil_1.default.testPrepProductListValueProxy.getValue();
+                this.form.allowTransitions = false;
+                var event = document.createEvent("CustomEvent");
+                event.initCustomEvent("partialRegModalOpen", true, true, {});
+                document.dispatchEvent(event);
+                var regDataValues = RegDOMDataUtil.loadRegDataValuesFromDOMForPartialModalOpen(e);
+                if (regDataValues.productKeyOverride) {
+                    regDataValues.product = RegProductDecider.determineProductFromState(regDataValues);
+                }
+                if (regDataValues.productKeyOverride === "TEST_PREP_AND_CERTIFICATES" || regDataValues.isSpecificTestPrep) {
+                    regDataValues.userType = "STUDENT";
+                    regDataValues.goals = "EXAM_PREP";
+                }
+                else if (this.memberInfoUtil.memberInfo.cocoon === "TEACHER") {
+                    if (!regDataValues.userType) {
+                        regDataValues.userType = "INSTRUCTOR";
+                    }
+                }
+                else if (!regDataValues.userType) {
+                    regDataValues.userType = "";
+                }
+                if (!RegFamilyPlanUtil.shouldAskFamilyPlanQuestion(regDataValues) && regDataValues.wantsFamilyPlan != null) {
+                    regDataValues.wantsFamilyPlan = null;
+                }
+                if (!RegProductDecider.shouldShowTutoringPlanGoal(regDataValues) && (regDataValues.goals === "TUTORING" || regDataValues.goals === "TUTORING_CHILD")) {
+                    regDataValues.goals = "";
+                }
+                regDataValues.landedOnCourseExamOrPractice = this.memberInfoUtil.memberInfo.landedOnCourseExamOrPractice;
+                this.form.resetState();
+                this.updateFormValuesAndRegMetadata(regDataValues);
+                if (regDataValues.productKeyOverride === "TEST_PREP_AND_CERTIFICATES" || regDataValues.isSpecificTestPrep) {
+                    this.form.goToFirstError();
+                }
+                if (e && e.relatedTarget) {
+                    this.saveValues();
+                    if (e.relatedTarget.getAttribute('data-skip-pre-filled-questions') === "true") {
+                        this.form.goToFirstError();
+                    }
+                    else if (e.relatedTarget.getAttribute('data-skip-third-step') === "true") {
+                        this.form.goToPageIndex(3);
+                    }
+                    else if (e.relatedTarget.getAttribute('data-skip-second-step') === "true") {
+                        this.form.goToPageIndex(2);
+                    }
+                    else if (e.relatedTarget.getAttribute('data-skip-first-step') === "true") {
+                        this.form.advancePage();
+                    }
+                }
+            }
+        });
+        Object.defineProperty(ReactRegModalApp, "EMAIL_REGEX", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
+        });
+        return ReactRegModalApp;
+    }());
+    exports.ReactRegModalApp = ReactRegModalApp;
+    var RegPixelsView = (0, mobx_react_1.observer)(function (props) {
+        var app = props.app;
+        var userType = app.form.values.userType;
+        var goal = app.form.values.goals;
+        var isModalOpenNow = !!document.querySelector("#partialRegFormModal.in");
+        return React.createElement(React.Fragment, null,
+            userType === "INSTRUCTOR" && React.createElement("img", { height: "1", width: "1", style: { border: "none", position: "absolute" }, alt: "", src: "//googleads.g.doubleclick.net/pagead/viewthroughconversion/954796532/?guid=ON&script=0" }),
+            userType && React.createElement("img", { height: "1", width: "1", style: { border: "none", position: "absolute" }, alt: "", src: "https://www.facebook.com/tr?id=878950682167250&ev=UserTypeSelected&cd[user_type]=" + userType }),
+            goal && isModalOpenNow && React.createElement("img", { height: "1", width: "1", style: { border: "none", position: "absolute" }, alt: "", src: "https://www.facebook.com/tr?id=878950682167250&ev=GoalSelected&cd[goal]=" + goal }));
+    });
+    var TestPrepDisclaimer = function () {
+        return React.createElement("div", { className: "test-prep-claims-disclaimer", "test-id": "test_prep_claims_disclaimer", "data-cname": "test_prep_claims_disclaimer" },
+            React.createElement("sup", null, "*"),
+            "Percentages come from surveys of over 300 test prep customers");
+    };
+    exports.TestPrepDisclaimer = TestPrepDisclaimer;
+    var TestPrepDisclaimerView = function () {
+        return React.createElement("div", { className: "test-prep-claims-disclaimer--reg-modal" },
+            React.createElement(exports.TestPrepDisclaimer, null));
+    };
+    var RegModalView = (0, mobx_react_1.observer)(function (props) {
+        var _a, _b, _c, _d;
+        var trackVisible = (0, react_track_visible_1.trackingRef)();
+        var regModalApp = props.app;
+        var userType = (_b = (_a = regModalApp.form) === null || _a === void 0 ? void 0 : _a.values) === null || _b === void 0 ? void 0 : _b.userType;
+        var goal = (_d = (_c = regModalApp.form) === null || _c === void 0 ? void 0 : _c.values) === null || _d === void 0 ? void 0 : _d.goals;
+        var isTestPrepStudent = userType === "STUDENT" && goal === "EXAM_PREP";
+        var isTestPrepTeacher = userType === "INSTRUCTOR" && goal === "TEACHER_CERTIFICATION";
+        var shouldShowSocialProof = (isTestPrepStudent || isTestPrepTeacher) && !regModalApp.shouldShowAnswersSidebar;
+        var modalTop = document.getElementById("partialRegFormModal").dataset.modalTop;
+        if (modalTop !== undefined && modalTop !== null) {
+            delete document.getElementById("partialRegFormModal").dataset.modalTop;
+        }
+        return React.createElement(React.StrictMode, null,
+            React.createElement(GenericErrorBoundary_1.GenericErrorBoundaryView, null,
+                React.createElement("div", { className: ReactRegAppUtil_1.reactRegAppUtil.isUserEligibleForSmsAcquisition(regModalApp) ? "sms-acquisition" : "", "data-cname": "partial_reg_form_modal", "test-id": "partial_reg_form_modal", "data-partial-reg-form-modal": true, ref: trackVisible },
+                    regModalApp.shouldShowTrackingPixels && React.createElement(RegPixelsView, __assign({}, props)),
+                    !ReactRegAppUtil_1.reactRegAppUtil.isUserScreenViewMobile() && React.createElement("div", { className: "headerContainer" },
+                        React.createElement(RegModalHeaderView, __assign({}, props))),
+                    React.createElement("div", { className: "form-section" },
+                        React.createElement("div", { className: "main-form-container" },
+                            ReactRegAppUtil_1.reactRegAppUtil.isUserScreenViewMobile() && React.createElement("div", { className: "headerContainer" },
+                                React.createElement(ModernizedRegModalHeaderView, __assign({}, props))),
+                            React.createElement(dynamic_form_2.DynamicFormView, { store: regModalApp.form })),
+                        React.createElement(RegSidebarViews_1.RegSidebarView, __assign({}, props))),
+                    shouldShowSocialProof && React.createElement(TestPrepDisclaimerView, null))));
+    });
+    var RegModalHeaderView = (0, mobx_react_1.observer)(function (props) {
+        var currentlyShowingFamilyPlanIntentQuestion = props.app.form.isQuestionKeyVisible("wantsFamilyPlan");
+        if (currentlyShowingFamilyPlanIntentQuestion) {
+            return React.createElement("h2", { "test-id": "reg_header", className: "reg-subheader--blue" }, "Congratulations, you are eligible for the Family Plan");
+        }
+        var paidTrialEligible = props.app.memberInfoUtil.memberInfo.isPaidTrialEligible;
+        if (!paidTrialEligible) {
+            if (!!props.app.dataFromReactElement["remove-risk-free"]) {
+                return React.createElement("h2", { "test-id": "reg_header" }, "Create your account");
+            }
+            return React.createElement("h2", { "test-id": "reg_header" }, "Create your account, risk-free");
+        }
+        var paidTrialEligibleGoal = RegInfoUtil.hasPaidTrialEligibleGoal(props.app.form.values["goals"]);
+        if (paidTrialEligibleGoal) {
+            return React.createElement("h2", { "test-id": "reg_header" }, "Create your account. No obligation, cancel anytime.");
+        }
+        return React.createElement("h2", { "test-id": "reg_header" }, "Create your account");
+    });
+    var ModernizedRegModalHeaderView = (0, mobx_react_1.observer)(function (props) {
+        var currentlyShowingFamilyPlanIntentQuestion = props.app.form.isQuestionKeyVisible("wantsFamilyPlan");
+        var paidTrialEligible = props.app.memberInfoUtil.memberInfo.isPaidTrialEligible;
+        var paidTrialEligibleGoal = RegInfoUtil.hasPaidTrialEligibleGoal(props.app.form.values["goals"]);
+        var headerText = "Create your account";
+        var subHeaderText;
+        if (currentlyShowingFamilyPlanIntentQuestion) {
+            headerText = "Congratulations, you are eligible for the Family Plan";
+        }
+        else if (!paidTrialEligible) {
+            if (!!props.app.dataFromReactElement["remove-risk-free"] === false) {
+                headerText = "Create your account, risk-free";
+            }
+        }
+        else if (paidTrialEligibleGoal) {
+            headerText = "Create your account.";
+            subHeaderText = "No obligation, cancel anytime.";
+        }
+        return (React.createElement("div", { className: "modernized-header" },
+            React.createElement("h2", { className: "modernized-header__main-text ".concat(currentlyShowingFamilyPlanIntentQuestion ? "reg-subheader--blue" : ""), "test-id": "reg_header" }, headerText),
+            subHeaderText && React.createElement("h5", { className: "modernized-header__sub-text", "test-id": "reg_header_subtext_modernized" }, subHeaderText)));
+    });
+});
+
+//# sourceMappingURL=ReactRegModal.app.js.map

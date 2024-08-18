@@ -1,0 +1,104 @@
+define(["require", "exports", "lib/axios", "util/value-pro-promise"], function (require, exports, axios_1, value_pro_promise_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var TestPrepProductUtil = (function () {
+        function TestPrepProductUtil() {
+            var _this = this;
+            Object.defineProperty(this, "testPrepProductListValueProxy", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: new value_pro_promise_1.default([], function () { return _this.getTestPrepProductList(); })
+            });
+        }
+        Object.defineProperty(TestPrepProductUtil.prototype, "getScoreBasedProductList", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                return axios_1.default.get("/academy/register/score-based-product-list.ajax")
+                    .then(function (value) {
+                    return value.data;
+                });
+            }
+        });
+        Object.defineProperty(TestPrepProductUtil.prototype, "getTestPrepProductList", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                return axios_1.default.get("/academy/register/test-prep-product-list.ajax")
+                    .then(function (value) {
+                    return value.data;
+                });
+            }
+        });
+        Object.defineProperty(TestPrepProductUtil.prototype, "getTestPrepRelatedCourseTitleByProductKey", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (productKey) {
+                return axios_1.default.get("/academy/register/related-course-title.ajax", {
+                    params: {
+                        productKey: productKey
+                    }
+                })
+                    .then(function (value) { return value.data; });
+            }
+        });
+        Object.defineProperty(TestPrepProductUtil.prototype, "getCourseNameOnCartBucketList", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                return [
+                    "AEPA", "ASP", "CHST", "CSP", "EPPP", "FINANCE", "FSA", "FTCE", "GACE", "GMAT", "HESI", "HISET", "HSPT", "IAAP_CAP", "ISEE",
+                    "KAPLAN_NURSING_ENTRANCE", "LITERACY_NUMERACY_INIT_TEACHER_ED", "NES", "NYSTCE", "PCAT", "PERT", "PHR", "PRAXIS", "PTCE", "RVT", "SSAT",
+                    "TEAS", "TOEFL"
+                ];
+            }
+        });
+        Object.defineProperty(TestPrepProductUtil.prototype, "getTestimonialsForTestPrepCourseNameProducts", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                return [
+                    { productKey: "AEPA", testimonialText: "I used Study.com as a tool to study for the AEPA test and I passed it on the first try.", authorName: "- Becca R." },
+                    { productKey: "ASP", testimonialText: "The videos were the BEST learning tool! This was just what I needed to take the ASP!", authorName: "- Heather V." },
+                    { productKey: "CHST", testimonialText: "I improved dramatically the more I committed myself to studying. The program helps identify your CHST strong points and where you need improvement.", authorName: "- David C." },
+                    { productKey: "CSP", testimonialText: "I have taken and passed the CSP exam. The Study.com material played a big part in passing the CSP exam.", authorName: "- Jim R." },
+                    { productKey: "EPPP", testimonialText: "Great place to study for the EPPP. Useful content, videos, and quizzes. Lots of fun and overall a positive experience.", authorName: "- Anya F." },
+                    { productKey: "FINANCE", testimonialText: "Studying for the Series 65 financial exam was daunting. The Study.com course work made it SO easy. Thank you!", authorName: "- Paul F." },
+                    { productKey: "FSA", testimonialText: "I used Study.com to help my 6th grader prepare for her FSA. Thank you!", authorName: "- Katie D." },
+                    { productKey: "FTCE", testimonialText: "Study.com saved me. The videos were amazing and very easy to follow. Because of Study.com I passed my FTCE.", authorName: "- Yazmin E." },
+                    { productKey: "GACE", testimonialText: "The lessons helped out a lot. I passed the Middle School Math GACE at the professional level, and was able to interview and be hired for a job a short time later. Well worth the money!", authorName: "- Daniel P." },
+                    { productKey: "GMAT", testimonialText: "It's easy to follow the GMAT lesson plans. Lots of videos to help explain the ideas, and quizzes on all the ideas to make sure you understand.", authorName: "- Margot M." },
+                    { productKey: "HESI", testimonialText: "Not only did I see the test reflected the topics on Study.com, but I also achieved a significantly higher score than I expected! I was really pleased and only had to take the HESI-A2 once to get into nursing school.", authorName: "- Megan W." },
+                    { productKey: "HISET", testimonialText: "The video made it simple to understand what to look for with HiSET essays and passages, without spending a lot of time.", authorName: "- Adrianne L." },
+                    { productKey: "HSPT", testimonialText: "I've been learning a lot from Study.com and I would definitely recommend it to anyone who needs help preparing for their HSPT.", authorName: "- Joshua A." },
+                    { productKey: "IAAP_CAP", testimonialText: "I have passed the CAP exam with flying colors! Thank you, Study.com! Highly recommend.", authorName: "- Donna C." },
+                    { productKey: "ISEE", testimonialText: "My daughter needed this to study for ISEE and it was a GREAT help. Seriously, highly recommended.", authorName: "- James H." },
+                    { productKey: "KAPLAN_NURSING_ENTRANCE", testimonialText: "The experience is amazing. I would refer others to use Study.com for the Kaplan Nursing Entrance exam.", authorName: "- Phillip S." },
+                    { productKey: "LITERACY_NUMERACY_INIT_TEACHER_ED", testimonialText: "This is a great app and I believe it helped me pass my literacy test—thank you!", authorName: "- Ashlea M." },
+                    { productKey: "NES", testimonialText: "I used Study.com to help me study for NES Elementary Subtest 1 and when I took the test, I passed. I credit Study.com to me passing!", authorName: "- Reginald W." },
+                    { productKey: "NYSTCE", testimonialText: "These Study.com study guides were immensely user-friendly, practical, and applicable to the NYSTCE examinations I needed to take. I wish I had found these resources sooner!", authorName: "- Tara D." },
+                    { productKey: "PCAT", testimonialText: "Study.com is great! I was able to pass the quizzes and the videos helped. Thank you!", authorName: "- Kristina B." },
+                    { productKey: "PERT", testimonialText: "All I have to say is thank you so much! Thanks to Study.com, I passed all the portions of PERT.", authorName: "- Hannah M. " },
+                    { productKey: "PHR", testimonialText: "I really like the lesson and quiz format, it's very helpful. Practicing the questions with Study.com helped me a lot to clear my PHR exam!", authorName: "- David T." },
+                    { productKey: "PRAXIS", testimonialText: "This is the best learning format I have ever seen! I have been struggling to study for Praxis for months. I like how Study.com meets me where I am.", authorName: "- Joanna D." },
+                    { productKey: "PTCE", testimonialText: "I like how it has sections. It shows you at the end what answers you specifically got wrong and tells you where to find the information. It is accurate in showing questions that will be asked on the actual Board of Pharmacy test (PTCE).", authorName: "- James H." },
+                    { productKey: "RVT", testimonialText: "Absolutely loved Study.com. I would recommend this program to anyone.", authorName: "- Julie D." },
+                    { productKey: "SSAT", testimonialText: "My daughter appreciated the videos on preparing for the written test and how to think about analogies, for example.  Thank you!", authorName: "- Stephanie T." },
+                    { productKey: "TEAS", testimonialText: "I am a nursing student applying for nursing school and I am so ecstatic with Study.com. I will recommend this to a friend any day.", authorName: "- Krystal B." },
+                    { productKey: "TOEFL", testimonialText: "I passed my TOEFL early! Great tool! Great website! Many thanks for being there for me.", authorName: "- Axel F." },
+                ];
+            }
+        });
+        return TestPrepProductUtil;
+    }());
+    var testPrepProductUtil = new TestPrepProductUtil();
+    exports.default = testPrepProductUtil;
+});
+
+//# sourceMappingURL=TestPrepProductUtil.js.map

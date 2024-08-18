@@ -1,0 +1,176 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+define(["require", "exports", "mobx-react", "react", "mobx"], function (require, exports, mobx_react_1, React, mobx_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ClaimStatsRedesignView = exports.ClaimStatsRedesignStore = void 0;
+    var ClaimStatsRedesignStore = (function () {
+        function ClaimStatsRedesignStore(stat, text, statColor, horizontalAlign, marginBetweenGraphAndText) {
+            Object.defineProperty(this, "stat", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "percent", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "text", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "statColor", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "horizontalAlign", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: false
+            });
+            Object.defineProperty(this, "marginBetweenGraphAndText", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            this.stat = stat;
+            this.percent = parseInt(stat);
+            this.text = text;
+            this.statColor = statColor;
+            this.horizontalAlign = !!horizontalAlign;
+            this.marginBetweenGraphAndText = marginBetweenGraphAndText;
+            if (!horizontalAlign) {
+                marginBetweenGraphAndText = "0";
+            }
+            else if (!marginBetweenGraphAndText) {
+                marginBetweenGraphAndText = "16px";
+            }
+            (0, mobx_1.makeAutoObservable)(this);
+        }
+        Object.defineProperty(ClaimStatsRedesignStore, "getCounter", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                ClaimStatsRedesignStore.counter += 1;
+                return ClaimStatsRedesignStore.counter;
+            }
+        });
+        Object.defineProperty(ClaimStatsRedesignStore, "counter", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: 0
+        });
+        return ClaimStatsRedesignStore;
+    }());
+    exports.ClaimStatsRedesignStore = ClaimStatsRedesignStore;
+    exports.ClaimStatsRedesignView = (0, mobx_react_1.observer)((function (_super) {
+        __extends(_, _super);
+        function _(props) {
+            var _this = _super.call(this, props) || this;
+            Object.defineProperty(_this, "circumference", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: 1000
+            });
+            Object.defineProperty(_this, "diameter", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: _this.circumference / Math.PI
+            });
+            Object.defineProperty(_this, "radius", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: _this.diameter / 2.0
+            });
+            Object.defineProperty(_this, "strokeWidth", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: 37.4085
+            });
+            Object.defineProperty(_this, "svgMaxCoord", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: _this.diameter + _this.strokeWidth
+            });
+            Object.defineProperty(_this, "maskCounter", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: ClaimStatsRedesignStore.getCounter()
+            });
+            Object.defineProperty(_this, "store", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(_this, "displayPercent", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            _this.store = props.store;
+            _this.displayPercent = _this.store.percent;
+            if (_this.displayPercent >= 90 && _this.displayPercent < 100) {
+                _this.displayPercent = _this.displayPercent - 3;
+            }
+            _this.displayPercent = _this.displayPercent * 10;
+            return _this;
+        }
+        Object.defineProperty(_.prototype, "render", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var store = this.store;
+                return (React.createElement("div", { className: "claim-stats--redesign", style: { flexDirection: store.horizontalAlign ? 'row' : 'column' } },
+                    React.createElement("svg", { className: "claim-stats--body", viewBox: "0 0 ".concat(this.svgMaxCoord, " ").concat(this.svgMaxCoord), style: store.horizontalAlign ? {
+                            marginRight: store.marginBetweenGraphAndText || '16px'
+                        } : null },
+                        React.createElement("g", null,
+                            React.createElement("path", { className: "background-path", d: "M ".concat(this.svgMaxCoord / 2.0, ", ").concat(this.svgMaxCoord / 2.0 - this.radius, "\n\t\t\t\t\t            a ").concat(this.radius, " ").concat(this.radius, " 0 0 1 0 ").concat(this.diameter, "\n\t\t\t\t\t            a ").concat(this.radius, " ").concat(this.radius, " 0 0 1 0 -").concat(this.diameter), strokeWidth: this.strokeWidth })),
+                        React.createElement("text", { className: "stat-text", x: this.svgMaxCoord / 2.0, y: this.svgMaxCoord / 2.0, fontSize: "91.325", dominantBaseline: "middle", textAnchor: "middle", fill: !!store.statColor ? store.statColor : '#67ad5b' }, store.stat),
+                        React.createElement("foreignObject", { className: "gradient-back", width: this.svgMaxCoord, height: this.svgMaxCoord, mask: "url(#progress-path-react-mask-".concat(this.maskCounter, ")") },
+                            React.createElement("div", { className: "gradient" })),
+                        React.createElement("mask", { id: "progress-path-react-mask-".concat(this.maskCounter), className: "progress-group" },
+                            React.createElement("rect", { x: "0", y: "0", height: this.svgMaxCoord, width: this.svgMaxCoord, fill: "black" }),
+                            React.createElement("path", { className: "progress-path", strokeDasharray: "".concat(this.displayPercent, " ").concat(this.circumference), d: "M ".concat(this.svgMaxCoord / 2.0, ", ").concat(this.svgMaxCoord / 2.0 - this.radius, "\n\t\t\t\t\t\t\t\t\ta ").concat(this.radius, " ").concat(this.radius, " 0 0 1 0 ").concat(this.diameter, "\n\t\t\t\t\t\t\t\t\ta ").concat(this.radius, " ").concat(this.radius, " 0 0 1 0 -").concat(this.diameter), strokeWidth: this.strokeWidth, strokeDashoffset: this.displayPercent }))),
+                    !!store.text &&
+                        React.createElement("div", { className: "claim-stats--description" }, store.text)));
+            }
+        });
+        return _;
+    }(React.Component)));
+});
+
+//# sourceMappingURL=ClaimStatsRedesign.js.map

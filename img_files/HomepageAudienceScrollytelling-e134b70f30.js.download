@@ -1,0 +1,43 @@
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+define(["require", "exports", "homepage/Scrollytelling", "react", "react-dom"], function (require, exports, Scrollytelling_1, React, ReactDOM) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.initializeFromContent = void 0;
+    function initializeFromContent(element, props) {
+        var rawSections = Array.from(element.querySelectorAll(".scrollytelling"));
+        var jumpLinks = [];
+        var sections = rawSections.map(function (section) {
+            var backgroundColor = section.style.backgroundColor;
+            var stickyContent = Array.from(section.querySelector(".scrollytelling__sticky").children);
+            var staticContent = Array.from(section.querySelector(".scrollytelling__static").children);
+            var cname = section.getAttribute("data-cname");
+            var linkLabel = section.getAttribute("data-link-label");
+            var linkToken = section.getAttribute("data-link-token");
+            var className = "jump-link jump-link--" + linkToken;
+            var sectionId = section.id;
+            if (linkLabel && sectionId) {
+                jumpLinks.push({ sectionId: sectionId, linkLabel: linkLabel, className: className });
+            }
+            return { backgroundColor: backgroundColor, stickyContent: stickyContent, staticContent: staticContent, cname: cname };
+        });
+        try {
+            ReactDOM.render(React.createElement(Scrollytelling_1.ScrollytellingComponent, __assign({ sections: sections }, (jumpLinks.length && { jumpLinks: jumpLinks }))), element);
+        }
+        catch (e) {
+            console.log("Error while initializing HomepageAudienceScrollytelling.  Leaving initial content in place.", e);
+        }
+    }
+    exports.initializeFromContent = initializeFromContent;
+});
+
+//# sourceMappingURL=HomepageAudienceScrollytelling.js.map

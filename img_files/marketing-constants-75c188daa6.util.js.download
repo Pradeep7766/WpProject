@@ -1,0 +1,209 @@
+define(["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.MarketingConstantsUtil = exports.CopyValues = void 0;
+    var CopyValues = (function () {
+        function CopyValues() {
+            Object.defineProperty(this, "aceCourseCount", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "activeMemberCount", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "courseCount", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "cumulativeTeachers", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "englishLanguageLearnerResources", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "flashcardSets", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "lessonCount", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "parentCount", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "skillsPracticeQuestions", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "studyAnswersCountShort", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "studyAnswersCount", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "studyAnswersCountMillions", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "studyResourceCount", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "teacherDistrictCount", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "teacherResourcesCount", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "testPrepExams", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "testPrepMoreConfident", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "transferableSchoolCount", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "videoLessonCount", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+        }
+        return CopyValues;
+    }());
+    exports.CopyValues = CopyValues;
+    var MarketingConstantsUtil = (function () {
+        function MarketingConstantsUtil() {
+            Object.defineProperty(this, "copyValues", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            this.copyValues = this.buildCopyValuesFromDOM();
+        }
+        Object.defineProperty(MarketingConstantsUtil, "instance", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                if (!this.__INSTANCE) {
+                    this.__INSTANCE = new MarketingConstantsUtil();
+                }
+                return this.__INSTANCE;
+            }
+        });
+        Object.defineProperty(MarketingConstantsUtil.prototype, "outputValueWithSpaces", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (key) {
+                var value = this.copyValues[key];
+                if (!value) {
+                    return value;
+                }
+                return " " + value + " ";
+            }
+        });
+        Object.defineProperty(MarketingConstantsUtil.prototype, "outputValueWithLeadingSpace", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (key) {
+                var value = this.copyValues[key];
+                if (!value) {
+                    return value;
+                }
+                return " " + value;
+            }
+        });
+        Object.defineProperty(MarketingConstantsUtil.prototype, "buildCopyValuesFromDOM", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var copyValues = new CopyValues();
+                var copyDataElement = document.querySelector("#copyValues");
+                if (copyDataElement) {
+                    copyValues.aceCourseCount = copyDataElement.getAttribute("data-ace-course-count");
+                    copyValues.activeMemberCount = copyDataElement.getAttribute("data-active-member-count");
+                    copyValues.courseCount = copyDataElement.getAttribute("data-course-count");
+                    copyValues.cumulativeTeachers = copyDataElement.getAttribute("data-cumulative-teachers");
+                    copyValues.englishLanguageLearnerResources = copyDataElement.getAttribute("data-english-language-learner-resources");
+                    copyValues.flashcardSets = copyDataElement.getAttribute("data-flash-card-sets");
+                    copyValues.lessonCount = copyDataElement.getAttribute("data-lesson-count");
+                    copyValues.parentCount = copyDataElement.getAttribute("data-parent-count");
+                    copyValues.skillsPracticeQuestions = copyDataElement.getAttribute("data-skills-practice-questions");
+                    copyValues.studyAnswersCountShort = copyDataElement.getAttribute("data-study-answers-count-short");
+                    copyValues.studyAnswersCount = copyDataElement.getAttribute("data-study-answers-count");
+                    copyValues.studyResourceCount = copyDataElement.getAttribute("data-study-resource-count");
+                    copyValues.teacherDistrictCount = copyDataElement.getAttribute("data-teacher-district-count");
+                    copyValues.teacherResourcesCount = copyDataElement.getAttribute("data-teacher-resource-count");
+                    copyValues.testPrepExams = copyDataElement.getAttribute("data-test-prep-exams");
+                    copyValues.videoLessonCount = copyDataElement.getAttribute("data-video-lesson-count");
+                    copyValues.transferableSchoolCount = copyDataElement.getAttribute("data-transferable-school-count");
+                    copyValues["com.study.testprep.claims.exam_passed"] = copyDataElement.getAttribute("data-com-study-testprep-claims-exam-passed");
+                    copyValues["com.study.testprep.claims.more_confident"] = copyDataElement.getAttribute("data-com-study-testprep-claims-more-confident");
+                    copyValues["com.study.cx.claims.averageStudentSavings"] = copyDataElement.getAttribute("data-com-study-cx-claims-averageStudentSavings");
+                    copyValues["com.study.testprep.claims.testPrepCourseCount"] = copyDataElement.getAttribute("data-com-study-testprep-claims-testPrepCourseCount");
+                    copyValues["studyAnswersCountWord"] = copyDataElement.getAttribute("data-study-answers-count-word");
+                }
+                return copyValues;
+            }
+        });
+        return MarketingConstantsUtil;
+    }());
+    exports.MarketingConstantsUtil = MarketingConstantsUtil;
+});
+
+//# sourceMappingURL=marketing-constants.util.js.map

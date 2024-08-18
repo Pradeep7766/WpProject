@@ -1,0 +1,126 @@
+header
+ {
+    background-color: #092856f9;
+    color: #fff;
+    padding: 10px;;
+}
+
+body {
+  font-family: "Lato", sans-serif;
+}
+
+.bg {
+ 
+  background-image: url("back.jpg");
+font-size: 90%;
+  height: 100%; 
+  color: transparent;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+body{
+  background-color: white;
+  font-family: sans-serif;
+  text-align: center;
+  margin:0 ;
+}
+
+header
+ {
+    background-color: #092856f9;
+    color: #fff;
+    padding: 10px;;
+}
+
+.sidenav {
+  height: 100%;
+  width: 20%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #62636b95;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 50px;
+}
+
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 30px;
+  color: #ffffff;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav a:hover {
+  color: #000000;
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+footer {
+    background-color: #092856f9;
+    color: #fff;
+   padding-top: 20px;
+    text-align: center;
+}
+
+  
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .title {
+    font-size: 3em;
+    margin-bottom: 1em;
+  }
+  
+  .subtitle {
+    font-size: 22px;
+    margin-bottom: 2em;
+  }
+  
+  .cards-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1em;
+    padding: 2em;
+  }
+  
+  .card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 1em;
+    width: 250px;
+  }
+  
+  .card-title {
+    font-size: 1.5em;
+    margin-bottom: 0.5em;
+  }
+  
+  .card-description {
+    font-size: 1em;
+    line-height: 1.5;
+  }
+  
+  .card-icon {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 1em;
+  }

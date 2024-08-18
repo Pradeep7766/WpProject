@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Online Platform for Technology</title>
+  <link rel="stylesheet" href="home.css">
+</head>
+
+<body>
+
+  <header>
+    <h1>STUDYSPOT</h1>
+    <div style="text-align: left;" id="mySidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <a href="home.html">Home</a>
+      <a href="home.html#a1">About</a>
+      <a href="playlist.html">Courses</a>
+      <a href="notes.html">Notes</a>
+      <a href="home.html#a2">Contact</a>
+    </div>
+    <div style="font-size:30px;cursor:pointer" onclick="openNav()">
+      &#9776;
+    </div>
+    <script>
+      function openNav() {
+        document.getElementById("mySidenav").style.width = "250px";
+      }
+
+      function closeNav() {
+        document.getElementById("mySidenav").style.width = "0px";
+      }
+    </script>
+  </header>
+  
+  </body>
+  </html>

@@ -1,0 +1,1313 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+define(["require", "exports", "@tippyjs/react", "logging/visible/react-track-visible", "mobx", "mobx-react", "react", "react-utils/react-study-helpers", "registration/RegProductBulletsViews", "util/marketing-constants.util", "util/remspect", "registration/ReactRegAppUtil", "registration/ClaimStatsRedesign", "testPrep/TestPrepProductUtil"], function (require, exports, react_1, react_track_visible_1, mobx_1, mobx_react_1, React, react_study_helpers_1, RegProductBulletsViews_1, marketing_constants_util_1, remspect, ReactRegAppUtil_1, ClaimStatsRedesign_1, TestPrepProductUtil_1) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ProductDuration = exports.RegSidebarGoogleShoppingCartView = exports.RegSidebarMobileCartView = exports._RegSidebarMobileCartView = exports.RegSidebarCartView = exports._RegSidebarCartView = exports.calculateIsIn2023PriceTest = exports.TeacherTestimonial = exports.ModernizedRegHeaderView = exports.RegSidebarView = void 0;
+    var PAID_TRIAL_DATE_FORMAT = "MMM[\u00a0]D,[\u00a0]YYYY";
+    var TEST_PREP_6_MONTHS_ONLY_PLANS = ["ACT_TEST_PREP_6_MONTHS_ONLY", "SAT_TEST_PREP_6_MONTHS_ONLY"];
+    var _RegSidebarView = (function (_super) {
+        __extends(_RegSidebarView, _super);
+        function _RegSidebarView(props) {
+            return _super.call(this, props) || this;
+        }
+        Object.defineProperty(_RegSidebarView.prototype, "mappingFromHelperTextIdentifierToQuestionKeys", {
+            get: function () {
+                return {
+                    "1": ["userType", "goals", "teacherSubject"],
+                    "2": ["email"],
+                    "4": ["password"],
+                    "5": ["billingAddressCountry", "billingFirstName", "billingLastName"],
+                    "family-plan": ["wantsFamilyPlan"],
+                };
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(_RegSidebarView.prototype, "isQuestionKeyMatchForHelperTextIdentifier", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (key, helperTextIdentifier) {
+                var _a;
+                return ((_a = this.mappingFromHelperTextIdentifierToQuestionKeys[helperTextIdentifier]) === null || _a === void 0 ? void 0 : _a.indexOf(key)) > -1;
+            }
+        });
+        Object.defineProperty(_RegSidebarView.prototype, "innerSidebar", {
+            get: function () {
+                var _a;
+                var app = this.props.app;
+                var store = app.form;
+                var questionKey = store.currentPage.questions[0].key;
+                if (app.shouldShowAnswersSidebar) {
+                    if (this.isQuestionKeyMatchForHelperTextIdentifier(questionKey, "1")) {
+                        return React.createElement(AnswersSidebar1, { relatedConceptName: app.studyAnswerRelatedConceptName });
+                    }
+                    if (this.isQuestionKeyMatchForHelperTextIdentifier(questionKey, "2") || this.isQuestionKeyMatchForHelperTextIdentifier(questionKey, "3")) {
+                        return React.createElement(AnswersSidebar2, null);
+                    }
+                    if (this.isQuestionKeyMatchForHelperTextIdentifier(questionKey, "4")) {
+                        return React.createElement(AnswersSidebar4, null);
+                    }
+                    if (this.isQuestionKeyMatchForHelperTextIdentifier(questionKey, "5")) {
+                        return React.createElement(AnswersSidebar5, null);
+                    }
+                    if (this.isQuestionKeyMatchForHelperTextIdentifier(questionKey, "family-plan")) {
+                        return React.createElement(FamilyPlanSidebar, null);
+                    }
+                    return React.createElement(DefaultSidebar, null);
+                }
+                var userType = store.values["userType"];
+                var productKey = (_a = app.regMetadata) === null || _a === void 0 ? void 0 : _a.product;
+                if (productKey === "COLLEGE_ACCELERATOR") {
+                    return React.createElement(CXSidebar, null);
+                }
+                if (shouldShowSelectTestPrepTestimonial(productKey)) {
+                    var testimonialMap = TestPrepProductUtil_1.default.getTestimonialsForTestPrepCourseNameProducts();
+                    var testimonial = testimonialMap.find(function (t) { return t.productKey === productKey; });
+                    if (testimonial) {
+                        return React.createElement(DefaultSidebar, { testimonialText: testimonial.testimonialText, header: "What members love", authorName: testimonial.authorName });
+                    }
+                }
+                if (shouldShowSocialProof(store)) {
+                    var isOnCartPage = false;
+                    return React.createElement(TestPrepSocialProofSidebar, { isOnCartPage: isOnCartPage, productKey: productKey });
+                }
+                if (this.isQuestionKeyMatchForHelperTextIdentifier(questionKey, "family-plan")) {
+                    return React.createElement(FamilyPlanSidebar, null);
+                }
+                var isStudent = userType !== "INSTRUCTOR" && userType !== "TUTOR";
+                if (isStudent) {
+                    if (this.isQuestionKeyMatchForHelperTextIdentifier(questionKey, "1")) {
+                        return React.createElement(StudentSidebar1, null);
+                    }
+                    if (this.isQuestionKeyMatchForHelperTextIdentifier(questionKey, "2")) {
+                        if (app.registrationData.product === "TUTORING") {
+                            return React.createElement(TutoringSidebar, null);
+                        }
+                        return React.createElement(DefaultSidebar, null);
+                    }
+                    if (this.isQuestionKeyMatchForHelperTextIdentifier(questionKey, "3")) {
+                        return React.createElement(StudentSidebar3, null);
+                    }
+                }
+                if (userType === "TUTOR") {
+                    return React.createElement(TutorSidebar, null);
+                }
+                if (userType === "INSTRUCTOR") {
+                    return React.createElement(TeacherSidebar, { teacherSubject: store.values["teacherSubject"] });
+                }
+                return React.createElement(DefaultSidebar, null);
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(_RegSidebarView.prototype, "render", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                return React.createElement("div", { className: "side-form-container", "test-id": "partial_reg_form_sidebar" }, this.innerSidebar);
+            }
+        });
+        return _RegSidebarView;
+    }(React.Component));
+    exports.RegSidebarView = (0, mobx_react_1.observer)(_RegSidebarView);
+    var _ModernizedRegHeaderView = (function (_super) {
+        __extends(_ModernizedRegHeaderView, _super);
+        function _ModernizedRegHeaderView(props) {
+            return _super.call(this, props) || this;
+        }
+        Object.defineProperty(_ModernizedRegHeaderView.prototype, "render", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                return React.createElement("div", { className: "heading headingTwo payPalMobileHeader" },
+                    React.createElement("h2", { className: "payPalMobileHeaderText" }, "Create your account"),
+                    React.createElement("h3", { className: "paidTrialSubtitle", "test-id": "paid_trial_subtitle" }, this.props.app.isPaidTrialEligible ? "No obligation; cancel anytime." :
+                        !!this.props.app.dataFromReactElement["remove-risk-free"] ?
+                            "Try it now. No obligation; cancel anytime." :
+                            "Try it risk-FREE. No obligation; cancel anytime."));
+            }
+        });
+        return _ModernizedRegHeaderView;
+    }(React.Component));
+    exports.ModernizedRegHeaderView = (0, mobx_react_1.observer)(_ModernizedRegHeaderView);
+    function shouldShowSocialProof(store) {
+        var userType = store.values.userType;
+        var isTestPrepStudent = userType === "STUDENT" && store.values.goals === "EXAM_PREP";
+        var isTestPrepTeacher = userType === "INSTRUCTOR" && store.values.goals === "TEACHER_CERTIFICATION";
+        var shouldShowSocialProof = isTestPrepStudent || isTestPrepTeacher;
+        return shouldShowSocialProof;
+    }
+    function shouldShowSelectTestPrepTestimonial(productKey) {
+        if (remspect.isControl("testPrepCourseNameWithSocialProof")) {
+            return false;
+        }
+        if (ReactRegAppUtil_1.reactRegAppUtil.isUserScreenViewMobile()) {
+            return false;
+        }
+        var eligibleTests = TestPrepProductUtil_1.default.getCourseNameOnCartBucketList();
+        return eligibleTests.indexOf(productKey) > -1;
+    }
+    function getClaimText(productKey) {
+        var asterisk = React.createElement("sup", null, "*");
+        if (TEST_PREP_6_MONTHS_ONLY_PLANS.indexOf(productKey) > -1) {
+            return React.createElement("p", { className: "test-prep-claim-reg-form__text" },
+                "were ",
+                React.createElement("em", { className: !ReactRegAppUtil_1.reactRegAppUtil.isUserScreenViewMobile() ? "red bold" : "blueberry bold" }, "more confident"),
+                " after using Study.com",
+                asterisk);
+        }
+        return React.createElement("p", { className: "test-prep-claim-reg-form__text" },
+            "of students ",
+            React.createElement("em", { className: !ReactRegAppUtil_1.reactRegAppUtil.isUserScreenViewMobile() ? "red bold" : "blueberry bold" }, "passed their exam"),
+            " after using Study.com",
+            asterisk);
+    }
+    function getClaimStats(productKey) {
+        var marketingConstantsUtil = marketing_constants_util_1.MarketingConstantsUtil.instance();
+        if (TEST_PREP_6_MONTHS_ONLY_PLANS.indexOf(productKey) > -1) {
+            return marketingConstantsUtil.copyValues["com.study.testprep.claims.more_confident"];
+        }
+        return marketingConstantsUtil.copyValues["com.study.testprep.claims.exam_passed"];
+    }
+    var TestPrepSocialProofSidebar = function (_a) {
+        var isOnCartPage = _a.isOnCartPage, productKey = _a.productKey;
+        var trackVisible = (0, react_track_visible_1.trackingRef)();
+        if (isOnCartPage && productKey === "PRAXIS" && remspect.isVariation("studyPlusEtsLogo", "v1")) {
+            return React.createElement("div", { className: "test-prep-claim-reg-form ".concat(isOnCartPage ? "on-cart-page" : "", " study-plus-ets-logo"), "data-cname": "test_prep_reg__study_plus_ets_logo", "test-id": "test_prep_reg__study_plus_ets_logo", ref: trackVisible },
+                React.createElement("img", { src: "/images/ets/logos/ets-logo.png", alt: "ETS\u00AE" }),
+                React.createElement("div", null, "Study.com is an official Praxis Research partner of ETS."));
+        }
+        var extraClasses = [];
+        if (isOnCartPage) {
+            extraClasses.push("on-cart-page");
+        }
+        var claimStatsRedesignTest = remspect.isVariation("claimStatsRedesign", "v1");
+        var claimStatsRedesignStore;
+        if (claimStatsRedesignTest) {
+            extraClasses.push("claim--redesign");
+            claimStatsRedesignStore = new ClaimStatsRedesign_1.ClaimStatsRedesignStore(getClaimStats(productKey), getClaimText(productKey));
+        }
+        if (TEST_PREP_6_MONTHS_ONLY_PLANS.indexOf(productKey) > -1) {
+            return React.createElement("div", { className: "test-prep-claim-reg-form ".concat(extraClasses.join(" ")), "data-cname": "test_prep_reg_claim", "test-id": "test_prep_reg_claim", ref: trackVisible }, claimStatsRedesignTest ?
+                React.createElement("div", { className: "reg-form-claim-stats--redesign" },
+                    React.createElement(ClaimStatsRedesign_1.ClaimStatsRedesignView, { store: claimStatsRedesignStore }))
+                :
+                    (React.createElement(React.Fragment, null,
+                        React.createElement("div", { className: "test-prep-claim-reg-form__stat" },
+                            React.createElement("div", { className: "test-prep-claim-reg-form__stat-pencil" }),
+                            React.createElement("div", { className: "test-prep-claim-reg-form__stat-circle" }, getClaimStats(productKey)),
+                            React.createElement("div", { className: "test-prep-claim-reg-form__stat-book" })),
+                        getClaimText(productKey))));
+        }
+        else {
+            return React.createElement("div", { className: "test-prep-claim-reg-form ".concat(extraClasses.join(" ")), "data-cname": "test_prep_reg_claim", "test-id": "test_prep_reg_claim", ref: trackVisible }, claimStatsRedesignTest ?
+                React.createElement("div", { className: "reg-form-claim-stats--redesign" },
+                    React.createElement(ClaimStatsRedesign_1.ClaimStatsRedesignView, { store: claimStatsRedesignStore }))
+                :
+                    React.createElement(React.Fragment, null,
+                        React.createElement("div", { className: "test-prep-claim-reg-form__stat" },
+                            React.createElement("div", { className: "test-prep-claim-reg-form__stat-pencil" }),
+                            React.createElement("div", { className: "test-prep-claim-reg-form__stat-circle" }, getClaimStats(productKey)),
+                            React.createElement("div", { className: "test-prep-claim-reg-form__stat-book" })),
+                        getClaimText(productKey)));
+        }
+    };
+    var TestPrepTutoringSocialProofSidebar = function (_a) {
+        var isOnCartPage = _a.isOnCartPage;
+        var trackVisible = (0, react_track_visible_1.trackingRef)();
+        return React.createElement("div", { className: "test-prep-claim-reg-form ".concat(isOnCartPage ? "on-cart-page" : ""), "data-cname": "test_prep_reg_claim", "test-id": "test_prep_reg_claim", ref: trackVisible },
+            React.createElement("div", { className: "test-prep-claim-reg-form__stat" },
+                React.createElement("img", { className: "test-prep-tutoring-claim-image", src: "/images/tutor/tutor-chat-bubble.png" })),
+            React.createElement("p", { className: "test-prep-claim-reg-form__text" },
+                "Achieve your goals with ",
+                React.createElement("b", null, "personalized 1-on-1 tutoring")));
+    };
+    var DefaultSidebar = function (_a) {
+        var header = _a.header, testimonialText = _a.testimonialText, authorName = _a.authorName;
+        return React.createElement("div", { className: "helper-text__fade-in", "test-id": "helper-text-not-cart" },
+            React.createElement("div", { className: "helperText fade-in" },
+                ReactRegAppUtil_1.reactRegAppUtil.isUserScreenViewMobile() && React.createElement("img", { src: "/images/registration/modernizeRegForm/people-icon.svg", className: "claim-icon-people" }),
+                React.createElement("h4", { className: ReactRegAppUtil_1.reactRegAppUtil.isUserScreenViewMobile() ? "blueberry" : "", "test-id": "testimonial_header" }, header ? header : "Students Love Study.com"),
+                React.createElement("p", { "test-id": "testimonial_text" }, testimonialText ? testimonialText : React.createElement(React.Fragment, null,
+                    "\"I learned more in ",
+                    React.createElement("em", { className: "teal bold" }, "10 minutes"),
+                    " than 1 month of chemistry classes\"")),
+                React.createElement("p", { className: ReactRegAppUtil_1.reactRegAppUtil.isUserScreenViewMobile() ? "italic" : "", "test-id": "testimonial_author" }, authorName ? authorName : "- Ashlee P.")));
+    };
+    var CXSidebar = function () {
+        var quoteAuthor = remspect.isControl("cxSocialProof") ? "Kayla J." : "Michael Magnotta";
+        var quote;
+        if (remspect.isControl("cxSocialProof")) {
+            quote = React.createElement("i", null,
+                "\"Study.com is so easy and less stressful than taking regular online college courses. I love that everything is self-paced. ",
+                React.createElement("b", null, "It\u2019s amazing!"),
+                "\"");
+        }
+        else {
+            quote = React.createElement("i", null, "\"You save time and money compared to other schools and the material is easy to digest.\"");
+        }
+        return React.createElement("div", { className: "helper-text__fade-in", "test-id": "helper-text-not-cart-cx" },
+            React.createElement("div", { className: "helperText fade-in" },
+                ReactRegAppUtil_1.reactRegAppUtil.isUserScreenViewMobile() && React.createElement("img", { src: "/images/registration/modernizeRegForm/people-icon.svg", className: "claim-icon-people" }),
+                React.createElement(React.Fragment, null,
+                    React.createElement("h4", { className: ReactRegAppUtil_1.reactRegAppUtil.isUserScreenViewMobile() ? "blueberry" : "" }, "Students Love Study.com"),
+                    React.createElement("p", null, quote),
+                    React.createElement("p", { className: ReactRegAppUtil_1.reactRegAppUtil.isUserScreenViewMobile() ? "italic" : "" },
+                        "- ",
+                        quoteAuthor))));
+    };
+    var AnswersSidebar1 = function (_a) {
+        var relatedConceptName = _a.relatedConceptName;
+        return React.createElement("div", { className: "helperText answers-helper-text", "test-id": "answers_helper_1" },
+            React.createElement("div", { className: "answer-icon" },
+                React.createElement("img", { src: "/images/studyAnswers/icon-teacher-blocks.svg", className: "teacher-icon" })),
+            React.createElement("div", { className: "helperText__text" },
+                React.createElement("h4", null, "Get expert help 24/7"),
+                React.createElement("p", null,
+                    "Sign up and access a network of thousands of ",
+                    relatedConceptName,
+                    " experts.")));
+    };
+    var AnswersSidebar2 = function () {
+        var marketingConstantsUtil = marketing_constants_util_1.MarketingConstantsUtil.instance();
+        return React.createElement("div", { className: "helperText answers-helper-text videoQuizHelperText", "test-id": "answers_helper_2" },
+            React.createElement("div", { className: "answer-icon video-icon" },
+                React.createElement("img", { src: "/images/studyAnswers/icon-videos.svg", className: "video-icon" })),
+            React.createElement("h4", null,
+                "Unlock access to ",
+                marketingConstantsUtil.outputValueWithLeadingSpace("studyAnswersCount"),
+                "+ answered questions"),
+            React.createElement("p", null,
+                "Study.com has a library of over ",
+                marketingConstantsUtil.outputValueWithSpaces("studyAnswersCount"),
+                "questions and answers for your toughest homework problems"));
+    };
+    var AnswersSidebar4 = function () {
+        var marketingConstantsUtil = marketing_constants_util_1.MarketingConstantsUtil.instance();
+        return React.createElement("div", { className: "helperText answers-helper-text videoQuizHelperText", "test-id": "answers_helper_4" },
+            React.createElement("div", { className: "answer-icon" },
+                React.createElement("img", { src: "/images/studyAnswers/icon-qa.svg", className: "qa-icon" })),
+            React.createElement("h4", null, "Did you know?"),
+            React.createElement("p", null,
+                "Study.com has a library of ",
+                marketingConstantsUtil.outputValueWithLeadingSpace("studyAnswersCount"),
+                "+ questions and answers for covering your toughest textbook problems"));
+    };
+    var AnswersSidebar5 = function () {
+        return React.createElement("div", { className: "helperText answers-helper-text videoQuizHelperText", "test-id": "answers_helper_5" },
+            React.createElement("div", { className: "answer-icon" },
+                React.createElement("img", { src: "/images/studyAnswers/icon-persona.svg", className: "persona-icon" })),
+            React.createElement("h4", null, "Students love Study.com"),
+            React.createElement("p", null, "I love the way expert tutors clearly explains the answers to my homework questions. Keep up the good work!"),
+            React.createElement("small", null,
+                React.createElement("em", null, "- Maritess, College Student")));
+    };
+    var FamilyPlanSidebar = function () {
+        return React.createElement("div", { className: "helperText fade-in", "test-id": "reg_form_helper_text_family_plan" },
+            React.createElement("h4", null, "Family Plan Includes"),
+            React.createElement("ul", { className: "reg-modal-product-bullets" },
+                React.createElement("li", null, "Free parent account"),
+                React.createElement("li", null, "Add one or more paid student subscriptions"),
+                React.createElement("li", null, "View individual student lesson progress"),
+                React.createElement("li", null, "Monitor quiz scores"),
+                React.createElement("li", null, "Receive weekly email status updates")));
+    };
+    var StudentSidebar1 = function () {
+        var marketingConstantsUtil = marketing_constants_util_1.MarketingConstantsUtil.instance();
+        return React.createElement("div", { className: "helperText fade-in" },
+            ReactRegAppUtil_1.reactRegAppUtil.isUserScreenViewMobile() && React.createElement("img", { src: "/images/registration/postModernRegFormV3/video-lessons-icon.svg", className: "claim-icon-video-lessons" }),
+            React.createElement("p", { className: ReactRegAppUtil_1.reactRegAppUtil.isUserScreenViewMobile() ? "font-size-18" : "" },
+                "Study.com video lessons have helped over",
+                React.createElement("em", { className: !ReactRegAppUtil_1.reactRegAppUtil.isUserScreenViewMobile() ? "red bold" : "teal bold" }, marketingConstantsUtil.outputValueWithSpaces("activeMemberCount")),
+                "students."));
+    };
+    var StudentSidebar3 = function () {
+        return React.createElement("div", { className: "helperText fade-in" },
+            React.createElement("h4", null, "Earn College Credit"),
+            React.createElement("p", null,
+                "\"I aced the CLEP exam and earned ",
+                React.createElement("em", { className: "green bold" }, "3 college credits!"),
+                "\""),
+            React.createElement("p", null, "- Clair S."));
+    };
+    var TutoringSidebar = function () {
+        return React.createElement("div", { className: "helperText fade-in" },
+            React.createElement("h4", null, "Students Love Study.com"),
+            React.createElement("p", null, "\"The tutor that helped me was perfect! My tutor was very helpful and was able to explain the solution to me.\""),
+            React.createElement("p", null, "- Xinyu Z."));
+    };
+    var TeacherTestimonial = function (_a) {
+        var teacherSubject = _a.teacherSubject;
+        switch (teacherSubject) {
+            case "ENGLISH_LANGUAGE_ARTS":
+                return React.createElement(EnglishLanguageArtsTestimonial, null);
+            case "ART_MUSIC_THEATER":
+                return React.createElement(ArtMusicTheaterTestimonial, null);
+            case "SOCIAL_SCIENCES":
+                return React.createElement(SocialSciencesTestimonial, null);
+            case "MATH":
+                return React.createElement(MathTestimonial, null);
+            case "SCIENCE":
+                return React.createElement(ScienceTestimonial, null);
+            case "WORLD_LANGUAGE":
+                return React.createElement(WorldLanguageTestimonial, null);
+            case "PROFESSIONAL_CAREER":
+                return React.createElement(ProfessionalCareerTestimonial, null);
+            case "MULTIPLE_SUBJECTS":
+                return React.createElement(MultipleSubjectsTestimonial, null);
+            default:
+                return React.createElement(DefaultTeacherTestimonial, null);
+        }
+    };
+    exports.TeacherTestimonial = TeacherTestimonial;
+    var TeacherSidebar = function (_a) {
+        var teacherSubject = _a.teacherSubject;
+        return React.createElement("div", { className: "helperText fade-in" },
+            ReactRegAppUtil_1.reactRegAppUtil.isUserScreenViewMobile() && React.createElement("img", { src: "/images/registration/modernizeRegForm/teacher-icon.svg", className: "claim-icon-teacher" }),
+            React.createElement("h4", null, "Teachers Love Study.com"),
+            React.createElement("div", { className: "reg-form-testimonial" },
+                React.createElement(exports.TeacherTestimonial, { teacherSubject: teacherSubject })));
+    };
+    var EnglishLanguageArtsTestimonial = function () {
+        return React.createElement("div", { className: "reg-form-testimonial" },
+            React.createElement("div", { className: "reg-form-testimonial__text", "test-id": "english_language_arts_teacher_testimonial", "data-cname": "english_language_arts_teacher_testimonial" }, "\"It provides a quick and engaging way to cover material needed to understand readings we are covering in class.\""),
+            React.createElement("div", { className: "reg-form-testimonial__credit" },
+                React.createElement("div", { className: "testimonial__credit__image icon-user3" }),
+                React.createElement("div", { className: "testimonial__credit__info" },
+                    React.createElement("div", { className: "testimonial__credit__info__name" }, "Teresa P."),
+                    React.createElement("div", { className: "testimonial__credit__info__role" }),
+                    React.createElement("div", null, "Ohio, United States"))));
+    };
+    var ArtMusicTheaterTestimonial = function () {
+        return React.createElement("div", { className: "reg-form-testimonial" },
+            React.createElement("div", { className: "reg-form-testimonial__text", "test-id": "art_music_theater_teacher_testimonial", "data-cname": "art_music_theater_teacher_testimonial" }, "\"It provides a quick and engaging way to cover material needed to understand readings we are covering in class.\""),
+            React.createElement("div", { className: "reg-form-testimonial__credit" },
+                React.createElement("div", { className: "testimonial__credit__image icon-user3" }),
+                React.createElement("div", { className: "testimonial__credit__info" },
+                    React.createElement("div", { className: "testimonial__credit__info__name" }, "Teresa P."),
+                    React.createElement("div", { className: "testimonial__credit__info__role" }),
+                    React.createElement("div", null, "Ohio, United States"))));
+    };
+    var SocialSciencesTestimonial = function () {
+        return React.createElement("div", { className: "reg-form-testimonial" },
+            React.createElement("div", { className: "reg-form-testimonial__text", "test-id": "social_sciences_teacher_testimonial", "data-cname": "social_sciences_teacher_testimonial" }, "\"A teacher friend recommended Study.com for social studies. I enjoy assigning the videos to my students. The videos are short, to the point, and the quiz allows me to test their knowledge on whatever subject in social studies I am teaching at the time.\""),
+            React.createElement("div", { className: "reg-form-testimonial__credit" },
+                React.createElement("div", { className: "testimonial__credit__image icon-user3" }),
+                React.createElement("div", { className: "testimonial__credit__info" },
+                    React.createElement("div", { className: "testimonial__credit__info__name" }, "Nancy A."),
+                    React.createElement("div", { className: "testimonial__credit__info__role" }),
+                    React.createElement("div", null, "Ohio, United States"))));
+    };
+    var MathTestimonial = function () {
+        return React.createElement("div", { className: "reg-form-testimonial" },
+            React.createElement("div", { className: "reg-form-testimonial__text", "test-id": "math_teacher_testimonial", "data-cname": "math_teacher_testimonial" }, "\"Every time I have searched for a lesson, there has been a perfect match to my needs as a middle school teacher of science, and algebra.\""),
+            React.createElement("div", { className: "reg-form-testimonial__credit" },
+                React.createElement("div", { className: "testimonial__credit__image icon-user3" }),
+                React.createElement("div", { className: "testimonial__credit__info" },
+                    React.createElement("div", { className: "testimonial__credit__info__name" }, "Kathy S."),
+                    React.createElement("div", { className: "testimonial__credit__info__role" }),
+                    React.createElement("div", null, "New Jersey, United States"))));
+    };
+    var ScienceTestimonial = function () {
+        return React.createElement("div", { className: "reg-form-testimonial" },
+            React.createElement("div", { className: "reg-form-testimonial__text", "test-id": "science_teacher_testimonial", "data-cname": "science_teacher_testimonial" }, "\"Your lessons are very well developed, especially the videos that use analogies for scientific phenomena. Great way to memorize science concepts.\""),
+            React.createElement("div", { className: "reg-form-testimonial__credit" },
+                React.createElement("div", { className: "testimonial__credit__image icon-user3" }),
+                React.createElement("div", { className: "testimonial__credit__info" },
+                    React.createElement("div", { className: "testimonial__credit__info__name" }, "Lusy D."),
+                    React.createElement("div", { className: "testimonial__credit__info__role" }),
+                    React.createElement("div", null, "California, United States"))));
+    };
+    var WorldLanguageTestimonial = function () {
+        return React.createElement("div", { className: "reg-form-testimonial" },
+            React.createElement("div", { className: "reg-form-testimonial__text", "test-id": "world_language_teacher_testimonial", "data-cname": "world_language_teacher_testimonial" }, "\"I love the way the lessons are laid out in small chunks with quizzes to make sure you understand a concept before moving on. Excellent!\""),
+            React.createElement("div", { className: "reg-form-testimonial__credit" },
+                React.createElement("div", { className: "testimonial__credit__image icon-user3" }),
+                React.createElement("div", { className: "testimonial__credit__info" },
+                    React.createElement("div", { className: "testimonial__credit__info__name" }, "Brandy K."),
+                    React.createElement("div", { className: "testimonial__credit__info__role" }),
+                    React.createElement("div", null))));
+    };
+    var ProfessionalCareerTestimonial = function () {
+        return React.createElement("div", { className: "reg-form-testimonial" },
+            React.createElement("div", { className: "reg-form-testimonial__text", "test-id": "professional_career_teacher_testimonial", "data-cname": "professional_career_teacher_testimonial" }, "\"I am a 7th-grade teacher and often use it for language arts and world history. The students find it quite engaging. On a professional note, it has helped me pass 2 out of the for 4 Single Subject CSET English Exams! Now I am using it to help me pass the last 2 subtest exams.\""),
+            React.createElement("div", { className: "reg-form-testimonial__credit" },
+                React.createElement("div", { className: "testimonial__credit__image icon-user3" }),
+                React.createElement("div", { className: "testimonial__credit__info" },
+                    React.createElement("div", { className: "testimonial__credit__info__name" }, "Scott S."),
+                    React.createElement("div", { className: "testimonial__credit__info__role" }),
+                    React.createElement("div", null, "California, United States"))));
+    };
+    var MultipleSubjectsTestimonial = function () {
+        return React.createElement("div", { className: "reg-form-testimonial" },
+            React.createElement("div", { className: "reg-form-testimonial__text", "test-id": "multiple_subjects_teacher_testimonial", "data-cname": "multiple_subjects_teacher_testimonial" }, "\"As a math/science tutor I find these lessons extremely helpful when introducing concepts to my students or reinforcing what they have been taught.\""),
+            React.createElement("div", { className: "reg-form-testimonial__credit" },
+                React.createElement("div", { className: "testimonial__credit__image icon-user3" }),
+                React.createElement("div", { className: "testimonial__credit__info" },
+                    React.createElement("div", { className: "testimonial__credit__info__name" }, "Tim H."),
+                    React.createElement("div", { className: "testimonial__credit__info__role" }),
+                    React.createElement("div", null, "Barbados"))));
+    };
+    var DefaultTeacherTestimonial = function () {
+        return React.createElement("div", { className: "reg-form-testimonial" },
+            React.createElement("div", { className: "reg-form-testimonial__text", "test-id": "teacher_testimonial", "data-cname": "teacher_testimonial" }, "\"I like that students can retake quizzes until they achieve a perfect score. I also like the ability to create \"guided note templates\" from the transcripts of each video lesson.\""),
+            React.createElement("div", { className: "reg-form-testimonial__credit" },
+                React.createElement("div", { className: "testimonial__credit__image" },
+                    React.createElement("img", { className: "testimonial__credit__image__image", src: "/images/registration/teacher/jaime-b-50.png" })),
+                React.createElement("div", { className: "testimonial__credit__info" },
+                    React.createElement("div", { className: "testimonial__credit__info__name" }, "Jaime B."),
+                    React.createElement("div", { className: "testimonial__credit__info__role" }, !ReactRegAppUtil_1.reactRegAppUtil.isUserScreenViewMobile() ? "Teacher, High School 9-12 Computer Science" : "Teacher, High School"),
+                    !ReactRegAppUtil_1.reactRegAppUtil.isUserScreenViewMobile() && React.createElement("div", null, "West Plains, MO"))));
+    };
+    var TutorSidebar = function () {
+        return React.createElement("div", { className: "helperText fade-in" },
+            ReactRegAppUtil_1.reactRegAppUtil.isUserScreenViewMobile() && React.createElement("img", { src: "/images/registration/modernizeRegForm/teacher-icon.svg", className: "claim-icon-teacher" }),
+            React.createElement("h4", null, "Teachers Love Study.com"),
+            React.createElement("p", { "test-id": "testimonial_control_text" },
+                "\"The videos have changed the way I teach! The videos on Study.com accomplish in ",
+                React.createElement("em", { className: "red bold" }, "5 minutes"),
+                " what would take me an entire class.\""),
+            React.createElement("p", null, "- Chris F."));
+    };
+    var showingCXOffer = function (app) {
+        var _a;
+        return app.regMetadata.product === "COLLEGE_ACCELERATOR" && (!!((_a = app.admissionsLandingPage) === null || _a === void 0 ? void 0 : _a.specialOffer) || !!app.prefillCouponCode);
+    };
+    function calculateIsIn2023PriceTest(product) {
+        return !remspect.isControl("basicPriceOct2023") && product == "BASIC"
+            || !remspect.isControl("classroomTeacherPriceOct2023") && product == "CLASSROOM_TEACHER"
+            || !remspect.isControl("premiumPriceOct2023") && product == "PREMIUM"
+            || !remspect.isControl("teacherPriceOct2023") && product == "TEACHER";
+    }
+    exports.calculateIsIn2023PriceTest = calculateIsIn2023PriceTest;
+    function buildProductName(app) {
+        var product = app.product;
+        if (!product) {
+            return null;
+        }
+        var productName = product.displayName;
+        if (product.key === "PREMIUM" || product.key === "PREMIUM_CORE") {
+            if (remspect.isVariation("renamePremium2024Q1", "studySaverPro")) {
+                productName = "Study Saver Pro";
+            }
+            else if (remspect.isVariation("renamePremium2024Q1", "knowledgeSaverPlan")) {
+                productName = "Knowledge Saver Plan";
+            }
+        }
+        else if (product.key === "PREMIUM_ANNUAL" || product.key === "PREMIUM_ANNUAL_CORE") {
+            if (remspect.isVariation("renamePremium2024Q1", "studySaverPro")) {
+                productName = "Study Saver Pro - Annual";
+            }
+            else if (remspect.isVariation("renamePremium2024Q1", "knowledgeSaverPlan")) {
+                productName = "Knowledge Saver Plan - Annual";
+            }
+        }
+        else if (product.key === "BASIC" || product.key === "BASIC_CORE") {
+            if (remspect.isVariation("renameBasic2024Q1", "studySaver")) {
+                productName = "Study Saver";
+            }
+            else if (remspect.isVariation("renameBasic2024Q1", "learningSaverPlan")) {
+                productName = "Learning Saver Plan";
+            }
+        }
+        else if (product.key === "BASIC_ANNUAL" || product.key === "BASIC_ANNUAL_CORE") {
+            if (remspect.isVariation("renameBasic2024Q1", "studySaver")) {
+                productName = "Study Saver - Annual";
+            }
+            else if (remspect.isVariation("renameBasic2024Q1", "learningSaverPlan")) {
+                productName = "Learning Saver Plan - Annual";
+            }
+        }
+        return React.createElement("span", { dangerouslySetInnerHTML: { __html: productName } });
+    }
+    function buildProductBoxPlanLabel(app, defaultValue) {
+        var _a;
+        var PERSONALIZE_CART_PRODUCT_BOX = "personalizeCartProductBox";
+        if (!remspect.isControl(PERSONALIZE_CART_PRODUCT_BOX) && ((_a = app === null || app === void 0 ? void 0 : app.registrationData) === null || _a === void 0 ? void 0 : _a.billingFirstName)) {
+            if (remspect.isVariation(PERSONALIZE_CART_PRODUCT_BOX, "firstNameYourSelectedPlan")) {
+                return React.createElement(React.Fragment, null,
+                    React.createElement("b", { className: "word-break-break-word", "data-cname": "personalized_product_box", ref: (0, react_track_visible_1.trackingRef)(), "test-id": "personalized_product_box" }, app.registrationData.billingFirstName),
+                    ", your selected plan:");
+            }
+            else if (remspect.isVariation(PERSONALIZE_CART_PRODUCT_BOX, "firstNamesCustomPlan")) {
+                return React.createElement(React.Fragment, null,
+                    React.createElement("b", { className: "word-break-break-word", "data-cname": "personalized_product_box", ref: (0, react_track_visible_1.trackingRef)(), "test-id": "personalized_product_box" },
+                        app.registrationData.billingFirstName,
+                        "'s"),
+                    " custom plan:");
+            }
+            else if (remspect.isVariation(PERSONALIZE_CART_PRODUCT_BOX, "firstNamesPreferredPlan")) {
+                return React.createElement(React.Fragment, null,
+                    React.createElement("b", { className: "word-break-break-word", "data-cname": "personalized_product_box", ref: (0, react_track_visible_1.trackingRef)(), "test-id": "personalized_product_box" },
+                        app.registrationData.billingFirstName,
+                        "'s"),
+                    " preferred plan:");
+            }
+        }
+        return defaultValue;
+    }
+    var _RegSidebarCartView = (function (_super) {
+        __extends(_RegSidebarCartView, _super);
+        function _RegSidebarCartView(props) {
+            return _super.call(this, props) || this;
+        }
+        Object.defineProperty(_RegSidebarCartView.prototype, "render", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var _a, _b, _c, _d;
+                var app = this.props.app;
+                var store = app.form;
+                var trackVisible = (0, react_track_visible_1.trackingRef)();
+                var regData = app.registrationData;
+                var shouldAddDataTrackRemspect = app.regMetadata.product === "COLLEGE_ACCELERATOR";
+                var paidTrialIsActive = app.isPaidTrialEligible && app.paidTrialPrice && app.regMetadata.hasSelectedPaidTrial;
+                var isAnswersProduct = app.regMetadata.product === "ANSWERS";
+                var testPrepTutoringIsActive = app.isTestPrepTutoringProduct && app.regMetadata.hasSelectedTestPrepTutoringProduct;
+                var isOnCartPage = store.currentPage === store.lastPage;
+                var isIn2023PriceTest = calculateIsIn2023PriceTest(app.regMetadata.product);
+                return React.createElement("div", { className: "form-sidebar", "test-id": "partial_reg_form_sidebar" },
+                    React.createElement("div", __assign({ className: "cart ".concat(app.isAnswersRegFlow ? "answers-reg-flow-cart" : ""), "data-cname": "cart-parent", ref: trackVisible }, (shouldAddDataTrackRemspect && { "data-track-remspect": "cxRegBullets" })),
+                        React.createElement("div", { className: "cart-product cart-product--tableless" },
+                            paidTrialIsActive && isAnswersProduct && !isIn2023PriceTest &&
+                                React.createElement("img", { src: "/images/registration/limited-time-offer-burst.png", className: "cart-product__limited-offer-burst" }),
+                            paidTrialIsActive && !isAnswersProduct && !isIn2023PriceTest &&
+                                React.createElement("img", { src: "/images/registration/20off.svg", className: "cart-product__percent-off-burst" }),
+                            !paidTrialIsActive && isIn2023PriceTest && app.isPaidTrialEligible
+                                && remspect.isVariation("priceTestSavingsBadge", "bestValue") &&
+                                React.createElement("img", { src: "/images/registration/best-value-burst.svg", className: "cart-product__percent-off-burst" }),
+                            !paidTrialIsActive && isIn2023PriceTest && app.isPaidTrialEligible
+                                && remspect.isVariation("priceTestSavingsBadge", "percentOff") &&
+                                React.createElement("img", { src: "/images/registration/16-percent-off-burst.svg", className: "cart-product__percent-off-burst" }),
+                            testPrepTutoringIsActive &&
+                                React.createElement("img", { src: "/images/registration/top-choice-burst.svg", className: "cart-product__percent-off-burst" }),
+                            React.createElement("h6", { className: "cart-product__subhead" }, buildProductBoxPlanLabel(app, "Your selected plan:")),
+                            React.createElement("div", { className: "cart-product__product-title", ref: (0, react_track_visible_1.trackingRef)(), "data-cname": "cart_product", "data-extra": ((_a = app.product) === null || _a === void 0 ? void 0 : _a.displayName) + (app.paidTrialPrice ? " PAID_TRIAL" : "") },
+                                !regData.wantsFamilyPlan && React.createElement("span", { className: "product-title-style", "test-id": "cart_product_name" }, buildProductName(app)),
+                                regData.wantsFamilyPlan && React.createElement("span", { className: "product-title-style", "test-id": "cart_product_name" }, "Family Plan")),
+                            ((_b = app.product) === null || _b === void 0 ? void 0 : _b.institutionName) &&
+                                React.createElement("div", null,
+                                    React.createElement("h6", null, "You are joining:"),
+                                    React.createElement("div", { className: "cart-product__product-title" },
+                                        React.createElement("span", { "data-cname": "cart_institution_name", "test-id": "cart_institution_name" }, (_c = app.product) === null || _c === void 0 ? void 0 : _c.institutionName))),
+                            !((_d = app.product) === null || _d === void 0 ? void 0 : _d.institutionName) && React.createElement("div", { className: "cart-product__price-box-container ".concat(showingCXOffer(app) ? "cart-product__price-box-container--with-cx-offer" : "") },
+                                React.createElement(NonInstitutionPriceBox, __assign({}, this.props)),
+                                !app.paidTrialPrice && app.showAnnualToggle &&
+                                    React.createElement("div", { className: "annual-billing-term-toggle-container" },
+                                        React.createElement(AnnualToggle, __assign({}, this.props)))),
+                            React.createElement(RegProductBulletsViews_1.ProductBulletsView, { app: this.props.app }),
+                            shouldShowSocialProof(store) &&
+                                React.createElement("div", { className: "test-prep-claim-reg-form-wrapper" }, (app.isTestPrepTutoringProduct && app.regMetadata.hasSelectedTestPrepTutoringProduct) ?
+                                    React.createElement(TestPrepTutoringSocialProofSidebar, { isOnCartPage: isOnCartPage })
+                                    :
+                                        React.createElement(TestPrepSocialProofSidebar, { isOnCartPage: isOnCartPage, productKey: app.product.key })))),
+                    !app.product && React.createElement("div", { className: "cart-empty", ref: (0, react_track_visible_1.trackingRef)(), "data-cname": "empty_cart" },
+                        React.createElement("p", null, "Your Cart is Empty. Please Choose a Product.")));
+            }
+        });
+        return _RegSidebarCartView;
+    }(React.Component));
+    exports._RegSidebarCartView = _RegSidebarCartView;
+    exports.RegSidebarCartView = (0, mobx_react_1.observer)(_RegSidebarCartView);
+    var _RegSidebarMobileCartView = (function (_super) {
+        __extends(_RegSidebarMobileCartView, _super);
+        function _RegSidebarMobileCartView(props) {
+            return _super.call(this, props) || this;
+        }
+        Object.defineProperty(_RegSidebarMobileCartView.prototype, "render", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var _a, _b;
+                var app = this.props.app;
+                var regData = app.registrationData;
+                if (app.shouldShowMobileCreditCardRedesign) {
+                    return React.createElement(RegMobileCartRedesign2023View, { app: app });
+                }
+                return React.createElement("div", { className: "mobile-cart", "data-cname": "mobile_cart", "data-extra": (_a = app.product) === null || _a === void 0 ? void 0 : _a.displayName, ref: (0, react_track_visible_1.trackingRef)(), "test-id": "mobile_cart" },
+                    app.gsCourseTitle && React.createElement(React.Fragment, null,
+                        React.createElement(exports.RegSidebarGoogleShoppingCartView, __assign({}, this.props)),
+                        React.createElement("div", { className: "price-details" },
+                            React.createElement("div", null,
+                                "Your account will be active for ",
+                                React.createElement("strong", null, "12 months")),
+                            React.createElement("div", null,
+                                "And if you have any questions, ",
+                                React.createElement("b", null, "you can reach out anytime")))),
+                    !app.gsCourseTitle && React.createElement(React.Fragment, null,
+                        regData.wantsFamilyPlan && React.createElement("p", { className: "family-plan-mobile-cart-message", "test-id": "family_plan_mobile_cart" }, "Family Plan includes one admin account and one student account. Add additional student accounts after sign up."),
+                        app.paidTrialPrice && !app.referred && React.createElement("div", { className: "month-paid-trial month-paid-trial--plan-name" },
+                            "Your selected plan: ",
+                            React.createElement("span", { className: "month-paid-trial__product", "data-cname": "cart_product", "test-id": "cart_product_name", "data-extra": ((_b = app.product) === null || _b === void 0 ? void 0 : _b.displayName) + ' PAID_TRIAL' }, buildProductName(app))),
+                        app.paidTrialPrice && !app.referred &&
+                            React.createElement(MobilePaidTrialPriceDetails, __assign({}, this.props)),
+                        app.isTestPrepTutoringProduct &&
+                            React.createElement(MobileTestPrepTutoring, __assign({}, this.props)),
+                        app.paidTrialPrice && !app.referred && !regData.wantsFamilyPlan &&
+                            React.createElement(PaidTrialToggles, __assign({}, this.props)),
+                        React.createElement("div", { className: "price-details price-details--flush-left ".concat(app.paidTrialMessagingEligible ? 'price-details--border' : '', " ").concat(showingCXOffer(app) ? "price-details--with-cx-offer" : ""), "data-cname": "bullet_list", ref: (0, react_track_visible_1.trackingRef)(), "data-track-remspect": "taxLanguage" },
+                            React.createElement(MobilePriceDetails, __assign({}, this.props))),
+                        app.showAnnualToggle && React.createElement("div", { className: "annual-billing-term-toggle-mobile-container" },
+                            React.createElement(AnnualToggle, __assign({}, this.props))),
+                        showingCXOffer(app) &&
+                            React.createElement(CXOfferView, { app: app })),
+                    React.createElement(RegProductBulletsViews_1.MobileProductBullets, __assign({}, this.props)));
+            }
+        });
+        return _RegSidebarMobileCartView;
+    }(React.Component));
+    exports._RegSidebarMobileCartView = _RegSidebarMobileCartView;
+    exports.RegSidebarMobileCartView = (0, mobx_react_1.observer)(_RegSidebarMobileCartView);
+    var RegMobileCartRedesign2023View = (0, mobx_react_1.observer)((function (_super) {
+        __extends(RegMobileCartMobileRedesign2023View, _super);
+        function RegMobileCartMobileRedesign2023View() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        Object.defineProperty(RegMobileCartMobileRedesign2023View.prototype, "componentDidMount", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var element = document.querySelector("#regFormHeader");
+                if (element) {
+                    element.classList.add("reg-form-header--hide");
+                }
+            }
+        });
+        Object.defineProperty(RegMobileCartMobileRedesign2023View.prototype, "componentWillUnmount", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var element = document.querySelector("#regFormHeader");
+                if (element) {
+                    element.classList.remove("reg-form-header--hide");
+                }
+            }
+        });
+        Object.defineProperty(RegMobileCartMobileRedesign2023View.prototype, "render", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var _a;
+                var app = this.props.app;
+                return (React.createElement("div", { className: "mobile-cart-redesign", "data-cname": "mobile_cart", "data-extra": (_a = app.product) === null || _a === void 0 ? void 0 : _a.displayName, ref: (0, react_track_visible_1.trackingRef)(), "test-id": "mobile_cart" },
+                    this.renderProductHeader(),
+                    this.renderPaidTrialOptions(),
+                    this.renderPlanInfo()));
+            }
+        });
+        Object.defineProperty(RegMobileCartMobileRedesign2023View.prototype, "renderProductHeader", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var _a;
+                var app = this.props.app;
+                var starburst = null;
+                if (!app.referred && app.paidTrialPrice && !app.registrationData.wantsFamilyPlan && app.isPaidTrialEligible) {
+                    starburst = this.renderDefaultStarburst();
+                    if ((_a = app.regMetadata) === null || _a === void 0 ? void 0 : _a.hasSelectedPaidTrial) {
+                        starburst = this.renderPaidTrialStarburst();
+                    }
+                }
+                return (React.createElement("div", { className: "mobile-cart-header" },
+                    React.createElement("h4", { className: "mobile-cart-header__product-name", "test-id": "cart_product_name" }, buildProductName(app)),
+                    React.createElement("small", { className: "mobile-cart-header__sub-text" }, "Cancel online, anytime!"),
+                    starburst));
+            }
+        });
+        Object.defineProperty(RegMobileCartMobileRedesign2023View.prototype, "renderDefaultStarburst", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                return (React.createElement("div", { className: "product-starburst" },
+                    React.createElement("span", { className: "product-starburst__text" },
+                        React.createElement("span", { className: "product-starburst__text--bold" }, "#1"),
+                        " Choice")));
+            }
+        });
+        Object.defineProperty(RegMobileCartMobileRedesign2023View.prototype, "renderPaidTrialStarburst", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                return (React.createElement("div", { className: "product-starburst product-starburst--discount" },
+                    React.createElement("span", { className: "product-starburst__text" },
+                        React.createElement("span", { className: "product-starburst__text--bold product-starburst__text--large" }, "20%"),
+                        " OFF")));
+            }
+        });
+        Object.defineProperty(RegMobileCartMobileRedesign2023View.prototype, "renderPaidTrialOptions", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var _a, _b;
+                var app = this.props.app;
+                if (!app.isPaidTrialEligible || !app.paidTrialPrice || app.referred || app.registrationData.wantsFamilyPlan) {
+                    return null;
+                }
+                return (React.createElement("div", { className: "month-paid-trial month-paid-trial--toggles month-paid-trial--mobile" },
+                    React.createElement("label", { className: "month-paid-trial__label", "test-id": "no_paid_trial", "data-cname": "no_paid_trial" },
+                        React.createElement("input", { type: "radio", className: "month-paid-trial__radio hidden", onClick: (0, mobx_1.action)(function () { return app.regMetadata.hasSelectedPaidTrial = false; }), checked: (_a = !app.regMetadata.hasSelectedPaidTrial) !== null && _a !== void 0 ? _a : true, value: "false", readOnly: true }),
+                        React.createElement("span", { className: "month-paid-trial__radio-custom" },
+                            React.createElement("span", null)),
+                        React.createElement("span", null, "Start now with our monthly plan")),
+                    React.createElement("label", { className: "month-paid-trial__label", "test-id": "select_paid_trial", "data-cname": "select_paid_trial" },
+                        React.createElement("input", { type: "radio", className: "month-paid-trial__radio hidden", onClick: (0, mobx_1.action)(function () { return app.regMetadata.hasSelectedPaidTrial = true; }), checked: (_b = app.regMetadata.hasSelectedPaidTrial) !== null && _b !== void 0 ? _b : false, value: "true", readOnly: true }),
+                        React.createElement("span", { className: "month-paid-trial__radio-custom" },
+                            React.createElement("span", null)),
+                        React.createElement("span", null,
+                            "Try it first for ",
+                            app.paidTrialDays,
+                            " days.",
+                            " ",
+                            React.createElement("span", { className: "month-paid-trial__special-offer" },
+                                "Special Offer!",
+                                " ",
+                                app.regMetadata.hasSelectedPaidTrial &&
+                                    React.createElement("span", { className: "month-paid-trial__special-offer-price", "test-id": "paid_trial_bullet" },
+                                        React.createElement("span", { "test-id": "reg_form_current_product_price", "data-price": app.paidTrialPrice }, app.paidTrialPrice),
+                                        "/first week"))))));
+            }
+        });
+        Object.defineProperty(RegMobileCartMobileRedesign2023View.prototype, "renderPlanInfo", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var _a;
+                var app = this.props.app;
+                var priceString = (0, react_study_helpers_1.currency)(((_a = app.product) === null || _a === void 0 ? void 0 : _a.remspectPriceCents) / 100);
+                var planInfoString = React.createElement("span", null,
+                    priceString,
+                    React.createElement(exports.ProductDuration, { app: app }),
+                    ".");
+                if (app.coupon || app.referred || app.regMetadata.hasSelectedPaidTrial) {
+                    planInfoString = app.getStartingPlanInfoString();
+                }
+                return (React.createElement("div", { className: "mobile-cart-plan-info" },
+                    this.renderCouponDiscount(),
+                    this.renderReferralDiscount(),
+                    React.createElement("span", { "test-id": "mobile_cart_plan_info" },
+                        planInfoString,
+                        React.createElement("span", { className: "mobile-cart-join-button--plan-info--italics" }, "\u00A0+ tax if applicable"))));
+            }
+        });
+        Object.defineProperty(RegMobileCartMobileRedesign2023View.prototype, "renderReferralDiscount", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var _a, _b;
+                var app = this.props.app;
+                if (!app.referred) {
+                    return null;
+                }
+                return (React.createElement(React.Fragment, null,
+                    React.createElement("span", { "test-id": "reg_form_referral_discount_message" },
+                        "One-time discount:",
+                        " ",
+                        React.createElement("span", { className: "mobile-cart-plan-info__savings" },
+                            (0, react_study_helpers_1.currency)(app.referralDiscountCents((_a = app.product) === null || _a === void 0 ? void 0 : _a.key) / 100),
+                            " off")),
+                    React.createElement("span", null,
+                        "First month's price:",
+                        " ",
+                        React.createElement("span", { className: "mobile-cart-plan-info__strong" }, (0, react_study_helpers_1.currency)(app.remspectPriceWithReferralDiscountCents((_b = app.product) === null || _b === void 0 ? void 0 : _b.key) / 100)))));
+            }
+        });
+        Object.defineProperty(RegMobileCartMobileRedesign2023View.prototype, "renderCouponDiscount", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var app = this.props.app;
+                if (app.coupon == null) {
+                    return null;
+                }
+                var discountText = app.coupon.percentOff ? app.coupon.percentOff + "%" : (0, react_study_helpers_1.currency)(app.coupon.amountOffCents / 100);
+                discountText += " off";
+                var couponDurationInMonths = app.coupon.durationInMonths;
+                if (couponDurationInMonths) {
+                    discountText += " for ".concat(couponDurationInMonths, " month").concat(couponDurationInMonths > 1 ? "s" : "");
+                }
+                var monthString = app.coupon.durationInMonths > 1 ? "months" : "month";
+                var priceString = (0, react_study_helpers_1.currency)(app.coupon.discountPriceCents / 100);
+                return (React.createElement(React.Fragment, null,
+                    React.createElement("span", null,
+                        "Coupon discount:",
+                        " ",
+                        React.createElement("span", { className: "mobile-cart-plan-info__savings" }, discountText)),
+                    React.createElement("span", null,
+                        React.createElement("span", { "test-id": "reg_form_coupon_price_message" },
+                            "First ",
+                            app.coupon.durationInMonths,
+                            " ",
+                            monthString,
+                            " - ",
+                            priceString),
+                        React.createElement(exports.ProductDuration, { app: app }),
+                        ".")));
+            }
+        });
+        return RegMobileCartMobileRedesign2023View;
+    }(React.Component)));
+    exports.RegSidebarGoogleShoppingCartView = (0, mobx_react_1.observer)((function (_super) {
+        __extends(_RegSidebarGoogleShoppingCartView, _super);
+        function _RegSidebarGoogleShoppingCartView(props) {
+            return _super.call(this, props) || this;
+        }
+        Object.defineProperty(_RegSidebarGoogleShoppingCartView.prototype, "render", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var app = this.props.app;
+                return React.createElement("div", { className: "cart", "test-id": "google_shopping_cart", "data-cname": "google_shopping_cart", ref: (0, react_track_visible_1.trackingRef)() },
+                    React.createElement("div", { className: "cart-product" },
+                        React.createElement("h6", null, "Your selected product:"),
+                        React.createElement("div", { className: "product-title" },
+                            React.createElement("span", { "test-id": "google_shopping_cart_course_name" }, app.gsCourseTitle),
+                            React.createElement("br", null),
+                            "(12\u00A0month subscription)"),
+                        React.createElement("div", { className: "cart__details" },
+                            React.createElement("div", { className: "cart__details__date" }, "Starting Today:"),
+                            React.createElement("div", { className: "cart__details__price" }, app.priceString),
+                            React.createElement("div", { className: "cart__details__original-price" }, app.originalPriceString)),
+                        React.createElement("div", { className: "cart__savings" },
+                            "Save ",
+                            app.discount,
+                            "%")));
+            }
+        });
+        return _RegSidebarGoogleShoppingCartView;
+    }(React.Component)));
+    var MobilePaidTrialPriceDetails = (0, mobx_react_1.observer)(function (props) {
+        var _a, _b;
+        var app = props.app;
+        return React.createElement("div", { className: "month-paid-trial month-paid-trial--pricing month-paid-trial--tax" },
+            React.createElement("span", null,
+                "Starting ",
+                React.createElement("span", { "test-id": "paid_trial_start_date" }, app.endTrialDate.format(PAID_TRIAL_DATE_FORMAT))),
+            !app.coupon && !app.regMetadata.hasSelectedPaidTrial && React.createElement("div", { className: "pull-right price-per-month--tax", "data-price": (0, react_study_helpers_1.currency)(((_a = app.product) === null || _a === void 0 ? void 0 : _a.remspectPriceCents) / 100) },
+                React.createElement("span", { className: "text-align-right" },
+                    React.createElement("span", { "test-id": "reg_form_current_product_price" }, (0, react_study_helpers_1.currency)(((_b = app.product) === null || _b === void 0 ? void 0 : _b.remspectPriceCents) / 100)),
+                    React.createElement("span", { className: "month-paid-trial--pricing-per" }, "/mo")),
+                React.createElement("div", { className: "must-be-grey-very-important pull-right tax_text" }, "(+ tax if applicable)")),
+            !app.coupon && app.regMetadata.hasSelectedPaidTrial && React.createElement("div", { className: "pull-right", "data-price": app.paidTrialPrice },
+                React.createElement("span", { "test-id": "reg_form_current_product_price" }, app.paidTrialPrice),
+                React.createElement("span", { className: "month-paid-trial--pricing-per" })),
+            app.coupon && React.createElement("div", { className: "pull-right", "data-price": (0, react_study_helpers_1.currency)(app.coupon.discountPriceCents / 100) },
+                React.createElement("span", { "test-id": "reg_form_current_product_price" }, (0, react_study_helpers_1.currency)(app.coupon.discountPriceCents / 100)),
+                React.createElement("span", { className: "month-paid-trial--pricing-per" }, "/mo")));
+    });
+    var MobileTestPrepTutoring = (0, mobx_react_1.observer)(function (props) {
+        var _a, _b, _c, _d;
+        var app = props.app;
+        return React.createElement(React.Fragment, null,
+            React.createElement("div", { className: "month-paid-trial month-paid-trial--plan-name" },
+                "Your selected plan:",
+                React.createElement("span", { className: "month-paid-trial__product test-prep-tutoring-product", "data-cname": "cart_product", "test-id": "cart_product_name" }, buildProductName(app))),
+            React.createElement("div", { className: "month-paid-trial month-paid-trial--pricing month-paid-trial--tax" },
+                React.createElement("span", null,
+                    "Starting ",
+                    React.createElement("span", { "test-id": "paid_trial_start_date" }, app.endTrialDate.format(PAID_TRIAL_DATE_FORMAT))),
+                React.createElement("div", { className: "pull-right price-per-month--tax", "data-price": (0, react_study_helpers_1.currency)(((_a = app.product) === null || _a === void 0 ? void 0 : _a.remspectPriceCents) / 100), "test-id": "reg_form_current_product_price" },
+                    React.createElement("span", { className: "text-align-right" },
+                        (0, react_study_helpers_1.currency)(((_b = app.product) === null || _b === void 0 ? void 0 : _b.remspectPriceCents) / 100),
+                        React.createElement("span", { className: "month-paid-trial--pricing-per" }, "/mo")),
+                    React.createElement("div", { className: "must-be-grey-very-important pull-right tax_text" },
+                        "Just ",
+                        React.createElement("span", null, (0, react_study_helpers_1.currency)(((_c = app.product) === null || _c === void 0 ? void 0 : _c.remspectPriceCents) / 100 / (30 * ((_d = app.product) === null || _d === void 0 ? void 0 : _d.billingIntervalCount)))),
+                        " a day (+ tax if applicable)"))),
+            React.createElement("div", { className: "month-paid-trial month-paid-trial--toggles", "test-id": "plan_selector_radio_button_list" },
+                React.createElement("label", { className: "month-paid-trial__label", "test-id": "no_test_prep_tutoring", "data-cname": "no_test_prep_tutoring" },
+                    React.createElement("input", { type: "radio", className: "month-paid-trial__radio hidden", onClick: function () { return app.regMetadata.hasSelectedTestPrepTutoringProduct = false; }, checked: !app.regMetadata.hasSelectedTestPrepTutoringProduct, onChange: function () { return app.setProductKey(app.testPrepNonTutoringProductKey); }, "data-cname": "plan_selector_radio_button_0" }),
+                    React.createElement("span", { className: "month-paid-trial__radio-custom" },
+                        React.createElement("span", null)),
+                    React.createElement("span", { "test-id": "plan_selector_radio_button_label" }, app.productMap[app.testPrepNonTutoringProductKey].displayName)),
+                React.createElement("label", { className: "month-paid-trial__label", "test-id": "select_test_prep_tutoring", "data-cname": "select_test_prep_tutoring" },
+                    React.createElement("input", { type: "radio", className: "month-paid-trial__radio hidden", onClick: function () { return app.regMetadata.hasSelectedTestPrepTutoringProduct = true; }, checked: app.regMetadata.hasSelectedTestPrepTutoringProduct, onChange: function () { return app.setProductKey(app.testPrepTutoringProductKey); }, "data-cname": "plan_selector_radio_button_1" }),
+                    React.createElement("span", { className: "month-paid-trial__radio-custom" },
+                        React.createElement("span", null)),
+                    React.createElement("span", { "test-id": "plan_selector_radio_button_label" },
+                        "$",
+                        app.productMap[app.testPrepTutoringProductKey].displayName))));
+    });
+    var PaidTrialToggles = (0, mobx_react_1.observer)(function (props) {
+        var app = props.app;
+        var isIn2023PriceTest = calculateIsIn2023PriceTest(app.regMetadata.product);
+        return React.createElement("div", { className: "month-paid-trial month-paid-trial--toggles" },
+            React.createElement("label", { className: "month-paid-trial__label", "test-id": "no_paid_trial", "data-cname": "no_paid_trial" },
+                React.createElement("input", { type: "radio", className: "month-paid-trial__radio hidden", onClick: (0, mobx_1.action)(function () { return app.regMetadata.hasSelectedPaidTrial = false; }), checked: !app.regMetadata.hasSelectedPaidTrial, value: "false", readOnly: true }),
+                React.createElement("span", { className: "month-paid-trial__radio-custom" },
+                    React.createElement("span", null)),
+                React.createElement("span", null,
+                    "Start now with our monthly plan",
+                    isIn2023PriceTest && app.isPaidTrialEligible && React.createElement("span", { className: "green semibold" }, " Best Value!"))),
+            React.createElement("label", { className: "month-paid-trial__label", "test-id": "select_paid_trial", "data-cname": "select_paid_trial" },
+                React.createElement("input", { type: "radio", className: "month-paid-trial__radio hidden", onClick: (0, mobx_1.action)(function () { return app.regMetadata.hasSelectedPaidTrial = true; }), checked: app.regMetadata.hasSelectedPaidTrial, value: "true", readOnly: true }),
+                React.createElement("span", { className: "month-paid-trial__radio-custom" },
+                    React.createElement("span", null)),
+                React.createElement("span", null,
+                    !remspect.isControl("paidPass") && "Get a " + app.paidTrialDays + " day pass. ",
+                    remspect.isControl("paidPass") && "Try it first for " + app.paidTrialDays + " days. ",
+                    !isIn2023PriceTest && React.createElement("span", { className: "green semibold" }, "Special Offer!"))));
+    });
+    var MobilePriceDetails = (0, mobx_react_1.observer)(function (props) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
+        var app = props.app;
+        var regData = app.registrationData;
+        return React.createElement(React.Fragment, null,
+            app.paidTrialPrice && !app.referred && regData.hasSelectedPaidTrial && React.createElement("div", { className: "price-details__row" },
+                "You will not be charged for your next month until ",
+                React.createElement("span", null, app.endPaidTrialDate.format(PAID_TRIAL_DATE_FORMAT))),
+            regData.wantsFamilyPlan && React.createElement("div", { className: "price-details__row", "test-id": "family_plan_mobile_admin_bullet" },
+                "Your admin account: ",
+                React.createElement("b", null, "$0.00/mo")),
+            (regData.hasSelectedPaidTrial || !app.paidTrialPrice) && !app.isTestPrepTutoringProduct && React.createElement("div", { className: "price-details__row" },
+                React.createElement("div", { className: "price-details__your-plan" },
+                    regData.wantsFamilyPlan && React.createElement("span", null, buildProductBoxPlanLabel(app, "Your student plan:")),
+                    !regData.wantsFamilyPlan && React.createElement("span", null, buildProductBoxPlanLabel(app, "Your plan:"))),
+                app.paidTrialPrice && React.createElement("span", null,
+                    React.createElement("span", { "test-id": "cart_product_name" }, buildProductName(app)),
+                    ",\u00A0",
+                    !app.coupon && React.createElement("span", null,
+                        React.createElement("span", { "test-id": "reg_form_current_product_price" }, (0, react_study_helpers_1.currency)(((_a = app.product) === null || _a === void 0 ? void 0 : _a.remspectPriceCents) / 100)),
+                        "/",
+                        ((_b = app.product) === null || _b === void 0 ? void 0 : _b.billingIntervalType) == 'YEAR' ? 'yr' : 'mo'),
+                    app.coupon && React.createElement("span", null,
+                        React.createElement("span", { "test-id": "reg_form_current_product_price" }, (0, react_study_helpers_1.currency)(app.coupon.discountPriceCents / 100)),
+                        "/",
+                        ((_c = app.product) === null || _c === void 0 ? void 0 : _c.billingIntervalType) == 'YEAR' ? 'yr' : 'mo')),
+                !app.paidTrialPrice && React.createElement("b", { className: "price-details__product-price" },
+                    React.createElement("span", { "test-id": "cart_product_name" }, buildProductName(app)),
+                    ",\u00A0",
+                    !app.coupon && React.createElement("span", null,
+                        React.createElement("span", { "test-id": "reg_form_current_product_price" }, (0, react_study_helpers_1.currency)(((_d = app.product) === null || _d === void 0 ? void 0 : _d.remspectPriceCents) / 100)),
+                        "/",
+                        ((_e = app.product) === null || _e === void 0 ? void 0 : _e.billingIntervalType) == 'YEAR' ? 'yr' : 'mo'),
+                    app.coupon && React.createElement("span", null,
+                        React.createElement("span", { "test-id": "reg_form_current_product_price" }, (0, react_study_helpers_1.currency)(app.coupon.discountPriceCents / 100)),
+                        "/",
+                        ((_f = app.product) === null || _f === void 0 ? void 0 : _f.billingIntervalType) == 'YEAR' ? 'yr' : 'mo')),
+                React.createElement("br", null),
+                React.createElement("em", { className: "mobile-tax-line-item", "test-id": "tax_line_item", "data-cname": "tax_line_item", ref: (0, react_track_visible_1.trackingRef)() },
+                    React.createElement("span", null,
+                        !regData.hasSelectedPaidTrial && React.createElement("span", { className: "must-be-grey-very-important" }, "Just\u00A0"),
+                        !regData.hasSelectedPaidTrial && !app.referred && !app.coupon && React.createElement("span", { className: "must-be-grey-very-important" }, (0, react_study_helpers_1.currency)(((_g = app.product) === null || _g === void 0 ? void 0 : _g.remspectPriceCents) / 100 / (((_h = app.product) === null || _h === void 0 ? void 0 : _h.billingIntervalType) == 'YEAR' ? 365 : 30
+                            * ((_j = app.product) === null || _j === void 0 ? void 0 : _j.billingIntervalCount)))),
+                        !regData.hasSelectedPaidTrial && !app.referred && app.coupon && React.createElement("span", { className: "must-be-grey-very-important" }, (0, react_study_helpers_1.currency)(app.coupon.discountPriceCents / 100 / (((_k = app.product) === null || _k === void 0 ? void 0 : _k.billingIntervalType) == 'YEAR' ? 365 : 30 * ((_l = app.product) === null || _l === void 0 ? void 0 : _l.billingIntervalCount)))),
+                        !regData.hasSelectedPaidTrial && !app.referred && React.createElement("span", { className: "must-be-grey-very-important" }, " / day")),
+                    !regData.hasSelectedPaidTrial && app.referred && React.createElement("span", { className: "must-be-grey-very-important" },
+                        (0, react_study_helpers_1.currency)(app.remspectPriceWithReferralDiscountCents((_m = app.product) === null || _m === void 0 ? void 0 : _m.key) / 100 / (30 * ((_o = app.product) === null || _o === void 0 ? void 0 : _o.billingIntervalCount))),
+                        " / day"),
+                    React.createElement("span", { className: "must-be-grey-very-important" }, " (+ tax if applicable)"))),
+            app.referred && React.createElement("div", { className: "price-details__row" },
+                "One-time discount: ",
+                React.createElement("span", { className: "mobile-cart__savings" },
+                    React.createElement("span", null, (0, react_study_helpers_1.currency)(app.referralDiscountCents((_p = app.product) === null || _p === void 0 ? void 0 : _p.key) / 100)),
+                    " off")),
+            app.referred && React.createElement("div", { className: "price-details__row" },
+                "First month's price: ",
+                React.createElement("b", null,
+                    React.createElement("span", null, (0, react_study_helpers_1.currency)(app.remspectPriceWithReferralDiscountCents((_q = app.product) === null || _q === void 0 ? void 0 : _q.key) / 100)))),
+            app.coupon && !app.paidTrialPrice && React.createElement("div", { className: "price-details__row price-details__coupon-discount" },
+                "Coupon discount: ",
+                React.createElement("span", { className: "mobile-cart__savings" },
+                    app.coupon.percentOff && React.createElement("span", null,
+                        app.coupon.percentOff,
+                        "%"),
+                    !app.coupon.percentOff && React.createElement("span", null, (0, react_study_helpers_1.currency)(app.coupon.amountOffCents / 100)),
+                    "\u00A0off",
+                    app.coupon.durationInMonths && React.createElement("span", null,
+                        " for ",
+                        React.createElement("span", null, app.coupon.durationInMonths),
+                        " month",
+                        app.coupon.durationInMonths > 1 &&
+                            React.createElement("span", null, "s")))),
+            React.createElement("div", { className: "price-details__row price-details__free-to-cancel" },
+                "You are free to ",
+                React.createElement("b", null, "cancel online, anytime")));
+    });
+    var CXOfferView = (0, mobx_react_1.observer)(function (props) {
+        var _a;
+        var app = props.app;
+        var isCouponValid = function (coupon) {
+            return (!!coupon.amountOffCents || !!coupon.percentOff) && (coupon.duration === "ONCE" || !!coupon.durationInMonths);
+        };
+        var getCouponAmount = function (coupon) {
+            if (coupon.amountOffCents) {
+                return (0, react_study_helpers_1.currency)(coupon.amountOffCents / 100) + " off";
+            }
+            if (coupon.percentOff) {
+                return coupon.percentOff + "% off";
+            }
+            return null;
+        };
+        var getCouponDuration = function (coupon) {
+            if (coupon.duration === "ONCE") {
+                return "your first month";
+            }
+            if (coupon.durationInMonths === 1) {
+                return "your first month";
+            }
+            return "your first ".concat(coupon.durationInMonths, " months");
+        };
+        var showingStudyOffer = app.prefillCouponCode && app.coupon && isCouponValid(app.coupon);
+        var showingUniversityOffer = !!((_a = app.admissionsLandingPage) === null || _a === void 0 ? void 0 : _a.specialOffer);
+        if (!showingStudyOffer && !showingUniversityOffer) {
+            return null;
+        }
+        return React.createElement(React.Fragment, null,
+            React.createElement("div", { className: "cx-offer" },
+                showingStudyOffer && showingUniversityOffer && React.createElement(React.Fragment, null,
+                    React.createElement("div", { className: "cx-offer__heading" }, "Your offers"),
+                    React.createElement("div", { className: "cx-offer__label" }, "Study.com discount"),
+                    React.createElement("div", { className: "cx-offer__pill cx-offer__pill--bottom-margin" },
+                        getCouponAmount(app.coupon),
+                        " ",
+                        getCouponDuration(app.coupon))),
+                showingStudyOffer && !showingUniversityOffer && React.createElement(React.Fragment, null,
+                    React.createElement("div", { className: "cx-offer__label" }, "Your offer"),
+                    React.createElement("div", { className: "cx-offer__pill" },
+                        getCouponAmount(app.coupon),
+                        " ",
+                        getCouponDuration(app.coupon))),
+                showingUniversityOffer && React.createElement(React.Fragment, null,
+                    React.createElement("div", { className: "cx-offer__label" }, app.admissionsLandingPage.company.name),
+                    React.createElement("div", { className: "cx-offer__pill" }, app.admissionsLandingPage.specialOffer))));
+    });
+    exports.ProductDuration = (0, mobx_react_1.observer)(function (props) {
+        var _a, _b, _c;
+        var app = props.app;
+        if (((_a = app.product) === null || _a === void 0 ? void 0 : _a.billingIntervalType) === "YEAR") {
+            return React.createElement("span", { className: props.spanClassName }, "/yr");
+        }
+        else {
+            return React.createElement("span", { className: props.spanClassName },
+                "/",
+                ((_b = app.product) === null || _b === void 0 ? void 0 : _b.billingIntervalCount) > 1 && React.createElement("span", null, ((_c = app.product) === null || _c === void 0 ? void 0 : _c.billingIntervalCount)
+                    + " "),
+                "mo");
+        }
+    });
+    var NonInstitutionPriceBox = (0, mobx_react_1.observer)((function (_super) {
+        __extends(_NonInstitutionPriceBox, _super);
+        function _NonInstitutionPriceBox(props) {
+            return _super.call(this, props) || this;
+        }
+        Object.defineProperty(_NonInstitutionPriceBox.prototype, "render", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11;
+                var app = this.props.app;
+                var regData = app.registrationData;
+                return React.createElement(React.Fragment, null,
+                    showingCXOffer(app) &&
+                        React.createElement(CXOfferView, { app: app }),
+                    (!app.paidTrialPrice || app.isTestPrepTutoringProduct) && React.createElement("div", { className: "cart-product__promotion" },
+                        React.createElement("b", null, "30 day"),
+                        " money back guarantee\u00A0",
+                        React.createElement(react_1.default, { content: "If within 30 days you are not satisfied, we will refund your money." },
+                            React.createElement("span", { className: "icon-question-sign tip" }))),
+                    React.createElement("div", { className: "price-box" },
+                        regData.wantsFamilyPlan && React.createElement("div", null,
+                            React.createElement("div", { className: "price-box__item" },
+                                React.createElement("span", null, "Admin Account"),
+                                React.createElement("span", { "test-id": "reg_form_parent_product_price" }, "$0"),
+                                React.createElement("span", { className: "billing-interval" }, "/mo")),
+                            React.createElement("div", { className: "price-box__item" },
+                                React.createElement("span", null, (_a = app.product) === null || _a === void 0 ? void 0 : _a.displayName),
+                                React.createElement("span", { "data-price": (0, react_study_helpers_1.currency)(((_b = app.product) === null || _b === void 0 ? void 0 : _b.remspectPriceCents) / 100), "test-id": "reg_form_child_product_price" }, (0, react_study_helpers_1.currency)(((_c = app.product) === null || _c === void 0 ? void 0 : _c.remspectPriceCents) / 100)),
+                                React.createElement(exports.ProductDuration, { app: app, spanClassName: "price-box__item--smaller" }))),
+                        app.paidTrialPrice && !app.referred && React.createElement("div", { className: "price-box__paid-trial-container" },
+                            React.createElement("div", { className: "price-box__item price-box__item-starting price-box__item--border" },
+                                React.createElement("span", { className: "billing-starting-date", "test-id": "billing_starting_date" },
+                                    "Starting\u00A0",
+                                    React.createElement("span", { "test-id": "paid_trial_start_date" }, app.endTrialDate.format(PAID_TRIAL_DATE_FORMAT))),
+                                React.createElement("span", null),
+                                !app.regMetadata.hasSelectedPaidTrial && !app.coupon && React.createElement("span", { className: "price-box__price", "data-price": (0, react_study_helpers_1.currency)(((_d = app.product) === null || _d === void 0 ? void 0 : _d.remspectPriceCents) / 100), "test-id": "reg_form_current_product_price" }, (0, react_study_helpers_1.currency)(((_e = app.product) === null || _e === void 0 ? void 0 : _e.remspectPriceCents) / 100)),
+                                app.regMetadata.hasSelectedPaidTrial && React.createElement("span", { className: "price-box__price", "data-price": app.paidTrialPrice, "test-id": "reg_form_current_product_price" }, app.paidTrialPrice),
+                                !app.regMetadata.hasSelectedPaidTrial && app.coupon && React.createElement("span", { className: "price-box__price", "data-price": (0, react_study_helpers_1.currency)(app.coupon.discountPriceCents / 100), "test-id": "reg_form_current_product_price" }, (0, react_study_helpers_1.currency)(app.coupon.discountPriceCents / 100))),
+                            React.createElement(PaidTrialToggles, __assign({}, this.props))),
+                        (app.coupon || app.referred) && !regData.wantsFamilyPlan && !app.paidTrialPrice && React.createElement("div", { className: "price-box__item" },
+                            React.createElement("span", null, "Original Price"),
+                            React.createElement("span", { "data-price": (0, react_study_helpers_1.currency)(((_f = app.product) === null || _f === void 0 ? void 0 : _f.remspectPriceCents) / 100), "test-id": "original_price" }, (0, react_study_helpers_1.currency)(((_g = app.product) === null || _g === void 0 ? void 0 : _g.remspectPriceCents) / 100)),
+                            React.createElement(exports.ProductDuration, { app: app })),
+                        app.coupon && !app.paidTrialPrice && React.createElement("div", { className: "price-box__item" },
+                            React.createElement("span", null,
+                                "Discount",
+                                React.createElement("br", null),
+                                app.coupon.durationInMonths && React.createElement("small", { className: "price-box__item--faded", "data-cname": "reg_form_discount_duration", "test-id": "reg_form_discount_duration" },
+                                    "For ",
+                                    React.createElement("span", null, app.coupon.durationInMonths),
+                                    " month",
+                                    app.coupon.durationInMonths > 1 && "s")),
+                            app.coupon.percentOff && React.createElement("span", { "data-cname": "reg_form_discount_percentage", "test-id": "reg_form_discount_percentage" },
+                                "\u2212\u00A0",
+                                app.coupon.percentOff,
+                                "%"),
+                            !app.coupon.percentOff && React.createElement("span", { "data-cname": "reg_form_amount_off_percentage", "test-id": "reg_form_amount_off_percentage" },
+                                "\u2212\u00A0",
+                                (0, react_study_helpers_1.currency)(app.coupon.amountOffCents / 100)),
+                            React.createElement(exports.ProductDuration, { app: app })),
+                        app.referred && React.createElement("div", { className: "price-box__item" },
+                            React.createElement("span", null,
+                                "Referral Credit",
+                                React.createElement("br", null)),
+                            React.createElement("span", { "data-cname": "reg_form_amount_off_percentage", "test-id": "reg_form_amount_off_percentage" },
+                                "\u2212\u00A0",
+                                (0, react_study_helpers_1.currency)(app.referralDiscountCents((_h = app.product) === null || _h === void 0 ? void 0 : _h.key) / 100)),
+                            React.createElement("span", null)),
+                        ((_j = app.product) === null || _j === void 0 ? void 0 : _j.billingIntervalType) === "MONTH" && !app.paidTrialPrice && !app.isTestPrepTutoringProduct && React.createElement("div", { className: "price-box__item" },
+                            React.createElement("span", { className: (app.coupon || app.referred) ? "price-box__item--strong price-box__item--larger" : "" },
+                                React.createElement("span", null, (app.coupon || app.referred) ? "Price " : "Starting "),
+                                !regData.hasSelectedPaidTrial && !app.coupon && React.createElement("span", { "test-id": "start_date" }, app.endTrialDate
+                                    .format(PAID_TRIAL_DATE_FORMAT)),
+                                regData.hasSelectedPaidTrial && React.createElement("span", { "test-id": "start_date" }, app.endPaidTrialDate.format(PAID_TRIAL_DATE_FORMAT))),
+                            !app.referred && !app.coupon && React.createElement("span", { className: "billing-price", "data-price": (0, react_study_helpers_1.currency)(((_k = app.product) === null || _k === void 0 ? void 0 : _k.remspectPriceCents) / 100), "test-id": "reg_form_current_product_price" }, (0, react_study_helpers_1.currency)(((_l = app.product) === null || _l === void 0 ? void 0 : _l.remspectPriceCents) / 100)),
+                            !app.referred && app.coupon && React.createElement("span", { className: "billing-price price-box__item--strong price-box__item--larger price-box__item--font-serif", "test-id": "reg_form_current_product_price" }, (0, react_study_helpers_1.currency)(app.coupon.discountPriceCents / 100)),
+                            app.referred && React.createElement("span", { className: "price-box__item--strong billing-price price-box__item--strong price-box__item--larger price-box__item--font-serif", "test-id": "reg_form_current_product_price" }, (0, react_study_helpers_1.currency)(app.remspectPriceWithReferralDiscountCents((_m = app.product) === null || _m === void 0 ? void 0 : _m.key) / 100)),
+                            React.createElement("span", { className: "billing-interval" },
+                                "/",
+                                ((_o = app.product) === null || _o === void 0 ? void 0 : _o.billingIntervalCount) > 1 && React.createElement("span", null, ((_p = app.product) === null || _p === void 0 ? void 0 : _p.billingIntervalCount) + " "),
+                                "mo")),
+                        app.isTestPrepTutoringProduct && React.createElement("div", { className: "price-box__paid-trial-container" },
+                            React.createElement("div", { className: "price-box__item price-box__item-starting price-box__item--border price-box__item__test-prep-tutoring" },
+                                React.createElement("span", null,
+                                    "Starting ",
+                                    app.endTrialDate.format(PAID_TRIAL_DATE_FORMAT)),
+                                React.createElement("span", { className: "price-box__price", "data-price": (0, react_study_helpers_1.currency)(((_q = app.product) === null || _q === void 0 ? void 0 : _q.remspectPriceCents) / 100), "test-id": "reg_form_current_product_price" }, (0, react_study_helpers_1.currency)(((_r = app.product) === null || _r === void 0 ? void 0 : _r.remspectPriceCents) / 100)),
+                                React.createElement("span", { className: "billing-interval" }, "/mo")),
+                            React.createElement("div", { className: "month-paid-trial month-paid-trial--toggles", "test-id": "plan_selector_radio_button_list" },
+                                React.createElement("label", { className: "month-paid-trial__label", "test-id": "no_test_prep_tutoring", "data-cname": "no_test_prep_tutoring" },
+                                    React.createElement("input", { type: "radio", className: "month-paid-trial__radio hidden", checked: !app.regMetadata.hasSelectedTestPrepTutoringProduct, onClick: (0, mobx_1.action)(function () {
+                                            app.regMetadata.hasSelectedTestPrepTutoringProduct = false;
+                                            app.setProductKey(app.dataFromReactElement["test-prep-non-tutoring-product"]);
+                                        }), "data-cname": "plan_selector_radio_button_0", value: "false", readOnly: true }),
+                                    React.createElement("span", { className: "month-paid-trial__radio-custom" },
+                                        React.createElement("span", null)),
+                                    React.createElement("span", { "test-id": "plan_selector_radio_button_text" }, app.getProductDisplayName(app.dataFromReactElement["test-prep-non-tutoring-product"]))),
+                                React.createElement("label", { className: "month-paid-trial__label", "test-id": "select_test_prep_tutoring", "data-cname": "select_test_prep_tutoring" },
+                                    React.createElement("input", { type: "radio", className: "month-paid-trial__radio hidden", checked: app.regMetadata.hasSelectedTestPrepTutoringProduct, onClick: (0, mobx_1.action)(function () {
+                                            app.regMetadata.hasSelectedTestPrepTutoringProduct = true;
+                                            app.setProductKey(app.dataFromReactElement["test-prep-tutoring-product"]);
+                                        }), "data-cname": "plan_selector_radio_button_1", value: "true", readOnly: true }),
+                                    React.createElement("span", { className: "month-paid-trial__radio-custom" },
+                                        React.createElement("span", null)),
+                                    React.createElement("span", { "test-id": "plan_selector_radio_button_text" }, app.getProductDisplayName(app.dataFromReactElement["test-prep-tutoring-product"]))))),
+                        !app.isPaidTrialEligible && ((_s = app.product) === null || _s === void 0 ? void 0 : _s.billingIntervalType) === "MONTH" &&
+                            React.createElement("div", { className: "price-box__item price-box__item--smaller price-box__item--faded price-box__item--taxParent" },
+                                React.createElement("span", null, "Just\u00A0"),
+                                !app.referred && !app.coupon && React.createElement("span", { className: "price-box__item--faded" }, (0, react_study_helpers_1.currency)(((_t = app.product) === null || _t === void 0 ? void 0 : _t.remspectPriceCents) / 100 / (30 * ((_u = app.product) === null || _u === void 0 ? void 0 : _u.billingIntervalCount)))),
+                                !app.referred && app.coupon && React.createElement("span", { className: "price-box__item--faded" }, (0, react_study_helpers_1.currency)(app.coupon.discountPriceCents / 100 / (30 * ((_v = app.product) === null || _v === void 0 ? void 0 : _v.billingIntervalCount)))),
+                                app.referred && React.createElement("span", { className: "price-box__item--faded" }, (0, react_study_helpers_1.currency)(app.remspectPriceWithReferralDiscountCents((_w = app.product) === null || _w === void 0 ? void 0 : _w.key) / 100 / (30 * ((_x = app.product) === null || _x === void 0 ? void 0 : _x.billingIntervalCount)))),
+                                React.createElement("span", { "data-cname": "per_day", ref: (0, react_track_visible_1.trackingRef)() }, "/day"),
+                                React.createElement("span", { className: "price-box__item--tax", "data-cname": "tax_line_item", ref: (0, react_track_visible_1.trackingRef)(), "test-id": "tax_line_item" }, "(+ tax if applicable)")),
+                        app.isPaidTrialEligible && ((_y = app.product) === null || _y === void 0 ? void 0 : _y.billingIntervalType) === "MONTH" && React.createElement("div", { className: "price-box__item price-box__item--smaller price-box__item--faded price-box__item--taxParent" },
+                            React.createElement("span", null),
+                            React.createElement("span", { className: "price-box__item--tax", "data-cname": "tax_line_item", ref: (0, react_track_visible_1.trackingRef)(), "test-id": "tax_line_item" }, "(+ tax if applicable)")),
+                        !app.coupon && !app.referred && ((_z = app.product) === null || _z === void 0 ? void 0 : _z.billingIntervalType) === "YEAR" && app.relatedMonthlyProduct && React.createElement("div", { className: "price-box__item price-box__item--emphasis" },
+                            React.createElement("span", { className: "price-box__item--smaller", "test-id": "monthly_savings_message" },
+                                "Save ",
+                                Math.round(100 * (1 - (((_0 = app.product) === null || _0 === void 0 ? void 0 : _0.discountPriceCents) / (12 * app.relatedMonthlyProduct.remspectPriceCents)))),
+                                "% off monthly plan"),
+                            React.createElement("span", { "test-id": "monthly_price" }, (0, react_study_helpers_1.currency)(app.relatedMonthlyProduct.remspectPriceCents / 100)),
+                            React.createElement("span", null, "/mo")),
+                        ((_1 = app.product) === null || _1 === void 0 ? void 0 : _1.billingIntervalType) === "YEAR" && TEST_PREP_6_MONTHS_ONLY_PLANS.indexOf((_2 = app.product) === null || _2 === void 0 ? void 0 : _2.key) < 0 &&
+                            React.createElement("div", { className: "price-box__item" },
+                                React.createElement("span", null),
+                                React.createElement("span", null,
+                                    React.createElement("span", { className: "price-box__item--faded" }, "Just\u00A0"),
+                                    !app.referred && !app.coupon && React.createElement("span", null, (0, react_study_helpers_1.currency)(((_3 = app.product) === null || _3 === void 0 ? void 0 : _3.discountPriceCents) / 12 / 100)),
+                                    !app.referred && app.coupon && React.createElement("span", null, (0, react_study_helpers_1.currency)(app.coupon.discountPriceCents / 12 / 100)),
+                                    app.referred && React.createElement("span", null, (0, react_study_helpers_1.currency)(app.remspectPriceWithReferralDiscountCents((_4 = app.product) === null || _4 === void 0 ? void 0 : _4.key) / 12 / 100))),
+                                React.createElement("span", null, "/mo"),
+                                React.createElement("span", { className: "price-box__item--tax", "data-cname": "tax_line_item", ref: (0, react_track_visible_1.trackingRef)(), "test-id": "tax_line_item" }, "(+ tax if applicable)")),
+                        ((_5 = app.product) === null || _5 === void 0 ? void 0 : _5.billingIntervalType) === "YEAR" && React.createElement("div", { className: "price-box__item price-box__item--dark-teal" },
+                            React.createElement("span", { className: "price-box__item--price-annual" }, "Price"),
+                            React.createElement("span", { className: "price-box__item--price-annual", "test-id": "reg_form_current_product_price" },
+                                !app.referred && !app.coupon && React.createElement("span", { "data-price": (0, react_study_helpers_1.currency)(((_6 = app.product) === null || _6 === void 0 ? void 0 : _6.discountPriceCents) / 100) }, (0, react_study_helpers_1.currency)(((_7 = app.product) === null || _7 === void 0 ? void 0 : _7.discountPriceCents) / 100)),
+                                !app.referred && app.coupon && React.createElement("span", { "data-price": (0, react_study_helpers_1.currency)(app.coupon.discountPriceCents / 100), className: "price-box__item--strong price-box__item--larger price-box__item--font-serif" }, (0, react_study_helpers_1.currency)(app.coupon.discountPriceCents / 100)),
+                                app.referred && React.createElement("span", { "data-price": (0, react_study_helpers_1.currency)(app.remspectPriceWithReferralDiscountCents((_8 = app.product) === null || _8 === void 0 ? void 0 : _8.key) / 100), className: "price-box__item--strong price-box__item--larger price-box__item--font-serif" }, (0, react_study_helpers_1.currency)(app.remspectPriceWithReferralDiscountCents((_9 = app.product) === null || _9 === void 0 ? void 0 : _9.key) / 100))),
+                            TEST_PREP_6_MONTHS_ONLY_PLANS.indexOf((_10 = app.product) === null || _10 === void 0 ? void 0 : _10.key) < 0 && React.createElement("span", { className: "price-box__item--dark-teal" }, "/yr"),
+                            TEST_PREP_6_MONTHS_ONLY_PLANS.indexOf((_11 = app.product) === null || _11 === void 0 ? void 0 : _11.key) > -1 && React.createElement("span", { className: "price-box__item--empty", style: { minWidth: 0 } }))));
+            }
+        });
+        return _NonInstitutionPriceBox;
+    }(React.Component)));
+    var AnnualToggle = (0, mobx_react_1.observer)((function (_super) {
+        __extends(_AnnualToggle, _super);
+        function _AnnualToggle(props) {
+            return _super.call(this, props) || this;
+        }
+        Object.defineProperty(_AnnualToggle.prototype, "render", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var app = this.props.app;
+                { }
+                return React.createElement(React.Fragment, null,
+                    React.createElement("hr", { className: "cart-hr" }),
+                    React.createElement("div", { className: "billing-term-options" },
+                        React.createElement("div", { className: "billing-term-options__item" },
+                            React.createElement("label", { className: "btn ".concat(app.regMetadata.currentProductBillingTerm === "ANNUAL" ? "active" : ""), "data-cname": "billing-controls-1-annual-btn", "test-id": "billing-controls-1-annual-btn" },
+                                React.createElement("input", { type: "radio", checked: app.regMetadata.currentProductBillingTerm === "ANNUAL", onClick: (0, mobx_1.action)(function () {
+                                        app.setBillingTerm("ANNUAL");
+                                    }), value: "ANNUAL", readOnly: true }),
+                                React.createElement("div", { className: "btn__text" },
+                                    "Annual ",
+                                    React.createElement("span", { className: "btn__text__desktop" }, "Billing")))),
+                        React.createElement("div", { className: "billing-term-options__item" },
+                            React.createElement("label", { className: "btn ".concat(app.regMetadata.currentProductBillingTerm === "MONTHLY" ? "active" : ""), "data-cname": "billing-controls-1-monthly-btn", "test-id": "billing-controls-1-monthly-btn" },
+                                React.createElement("input", { type: "radio", checked: app.regMetadata.currentProductBillingTerm === "MONTHLY", onClick: (0, mobx_1.action)(function () {
+                                        app.setBillingTerm("MONTHLY");
+                                    }), value: "MONTHLY", readOnly: true }),
+                                React.createElement("div", { className: "btn__text" },
+                                    "Monthly ",
+                                    React.createElement("span", { className: "btn__text__desktop" }, "Billing"))))));
+            }
+        });
+        return _AnnualToggle;
+    }(React.Component)));
+});
+
+//# sourceMappingURL=RegSidebarViews.js.map

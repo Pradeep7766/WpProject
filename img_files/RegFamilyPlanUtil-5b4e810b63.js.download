@@ -1,0 +1,30 @@
+define(["require", "exports", "util/remspect", "registration/RegProductDecider"], function (require, exports, remspect, RegProductDecider) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.isFamilyPlanEligibleProduct = exports.shouldAskFamilyPlanQuestion = void 0;
+    function shouldAskFamilyPlanQuestion(info) {
+        if (info == null) {
+            return false;
+        }
+        var possibleProductKey = info.product;
+        if (!possibleProductKey) {
+            possibleProductKey = RegProductDecider.determineProductFromState(info);
+        }
+        if (!remspect.isControl("homeschoolUserType") && info.userType === "HOMESCHOOLER" && info.goals !== "HOME_SUPPLEMENT") {
+            return true;
+        }
+        var hasFamilyPlanCompatibleProduct = isFamilyPlanEligibleProduct(possibleProductKey);
+        var hasFamilyPlanCompatibleRegData = info.goals === "HOMESCHOOL";
+        return hasFamilyPlanCompatibleRegData && hasFamilyPlanCompatibleProduct;
+    }
+    exports.shouldAskFamilyPlanQuestion = shouldAskFamilyPlanQuestion;
+    function isFamilyPlanEligibleProduct(productKey) {
+        return productKey === "HOMESCHOOL"
+            || productKey === "HOMESCHOOL_ANNUAL"
+            || productKey === "PREMIUM"
+            || productKey === "PREMIUM_ANNUAL";
+    }
+    exports.isFamilyPlanEligibleProduct = isFamilyPlanEligibleProduct;
+});
+
+//# sourceMappingURL=RegFamilyPlanUtil.js.map

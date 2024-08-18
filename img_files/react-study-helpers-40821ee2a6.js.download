@@ -1,0 +1,690 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+define(["require", "exports", "react", "react", "react-dom", "compatibility/promise-polyfill"], function (require, exports, react_1, React, ReactDOM) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.extractStudyHTMLAttributes = exports.useMeasureElementSize = exports.renderReplace = exports.MathJaxText = exports.ReactTransitionBetweenComponents = exports.SessionStorageManager = exports.LocalStorageManager = exports.IntersectionObserverRef = exports.reactBootstrap = exports.currency = exports.StudyThemeProvider = exports.getQueryParams = exports.containsMathJax = exports.renderMathJaxCallback = exports.renderMathJax = void 0;
+    function renderMathJax(ref) {
+        (0, exports.renderMathJaxCallback)(ref.current);
+    }
+    exports.renderMathJax = renderMathJax;
+    var renderMathJaxCallback = function (node) {
+        if (!node) {
+            return;
+        }
+        require(["mathjax"], function (MathJax) {
+            MathJax.startup.promise = MathJax.startup.promise
+                .then(function () { return MathJax.typesetPromise([node]); })
+                .catch(function (e) {
+                console.warn("issue rendering mathjax");
+                console.warn(e);
+            });
+        });
+    };
+    exports.renderMathJaxCallback = renderMathJaxCallback;
+    function containsMathJax(value) {
+        return value.indexOf("{eq}") > -1 || value.indexOf("{am}") > -1 || value.indexOf("$$") > -1;
+    }
+    exports.containsMathJax = containsMathJax;
+    var LazyThemeProvider = React.lazy(function () {
+        return new Promise(function (resolve_1, reject_1) { require(["lib/react-bootstrap"], resolve_1, reject_1); }).then(function (ReactBootstrapModule) {
+            return { default: ReactBootstrapModule.ThemeProvider };
+        });
+    });
+    var getQueryParams = function () {
+        var queryString = (window.location.search || "").replace(/^\?/, "");
+        var pairs = queryString.split("&");
+        var queryParams = {};
+        pairs.forEach(function (p) {
+            var _a = p.split("=", 2).map(decodeURIComponent), key = _a[0], value = _a[1];
+            queryParams[key] = value;
+        });
+        return queryParams;
+    };
+    exports.getQueryParams = getQueryParams;
+    var StudyThemeProvider = (function (_super) {
+        __extends(StudyThemeProvider, _super);
+        function StudyThemeProvider() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        Object.defineProperty(StudyThemeProvider.prototype, "render", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                return React.createElement(React.Suspense, { fallback: null },
+                    React.createElement(LazyThemeProvider, { prefixes: StudyThemeProvider.STUDY_CLASS_PREFIXES }, React.createElement(LazyComponentInner, { lazyComponentDidMount: this.props.lazyComponentDidMount }, this.props.children)));
+            }
+        });
+        Object.defineProperty(StudyThemeProvider, "STUDY_CLASS_PREFIXES", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: {
+                "modal": "bs5-modal",
+                "modal-body": "bs5-modal-body",
+                "modal-dialog": "bs5-modal-dialog",
+                "modal-footer": "bs5-modal-footer",
+                "modal-header": "bs5-modal-header",
+                "modal-title": "bs5-modal-title",
+                "carousel": "bs5-carousel",
+                "carousel-caption": "bs5-carousel-caption",
+                "carousel-item": "bs5-carousel-item",
+                "tooltip": "bs5-tooltip",
+                "tooltip-inner": "bs5-tooltip-inner",
+                "popover": "bs5-popover",
+                "dropdown": "bs5-dropdown",
+                "dropdown-toggle": "bs5-dropdown-toggle",
+                "dropdown-menu": "bs5-dropdown-menu",
+                "dropdown-header": "bs5-dropdown-header",
+                "dropdown-item": "bs5-dropdown-item",
+            }
+        });
+        return StudyThemeProvider;
+    }(React.Component));
+    exports.StudyThemeProvider = StudyThemeProvider;
+    var LazyComponentInner = (function (_super) {
+        __extends(LazyComponentInner, _super);
+        function LazyComponentInner() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        Object.defineProperty(LazyComponentInner.prototype, "componentDidMount", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                if (this.props.lazyComponentDidMount != null) {
+                    this.props.lazyComponentDidMount();
+                }
+            }
+        });
+        Object.defineProperty(LazyComponentInner.prototype, "render", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                return React.createElement(React.Fragment, null, this.props.children);
+            }
+        });
+        return LazyComponentInner;
+    }(React.Component));
+    var currency = function (value) {
+        if (value == null) {
+            return "";
+        }
+        if (!value.toString().split(".")[1]) {
+            return '$' + value.toFixed(0);
+        }
+        return '$' + value.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+    };
+    exports.currency = currency;
+    var ChildrenToJsxHelper = (function () {
+        function ChildrenToJsxHelper(element) {
+            Object.defineProperty(this, "childJsxElements", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: []
+            });
+            for (var i = 0; i < element.children.length; i++) {
+                var child = element.children.item(i);
+                var childTagName = child.tagName.toLowerCase();
+                var childContent = child.innerHTML;
+                var childAttributes = {};
+                for (var _i = 0, _a = child.getAttributeNames(); _i < _a.length; _i++) {
+                    var attributeName = _a[_i];
+                    var attributeValue = child.getAttribute(attributeName);
+                    if (attributeName === "class") {
+                        attributeName = "className";
+                    }
+                    childAttributes[attributeName] = attributeValue;
+                }
+                childAttributes.dangerouslySetInnerHTML = {
+                    __html: childContent,
+                };
+                this.childJsxElements.push(React.createElement(childTagName, childAttributes));
+            }
+        }
+        return ChildrenToJsxHelper;
+    }());
+    var ParsePropsFromAttributesHelper = (function () {
+        function ParsePropsFromAttributesHelper() {
+        }
+        Object.defineProperty(ParsePropsFromAttributesHelper, "parsePropsFromAttributes", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (element) {
+                var props = {};
+                for (var _i = 0, _a = element.getAttributeNames(); _i < _a.length; _i++) {
+                    var attributeName = _a[_i];
+                    if (!this.startsWith(attributeName, ParsePropsFromAttributesHelper.PROPS_ATTRIBUTE_PREFIX)) {
+                        continue;
+                    }
+                    var splitName = attributeName.split("-");
+                    if (splitName.length < 3) {
+                        throw new Error("React-ng prop- attribute name must follow the format prop-type-propname. E.g: prop-bool-show-see-all. Error parsing "
+                            + attributeName);
+                    }
+                    var propType = splitName[1];
+                    var fullPropName = this.camelCaseifyArray(splitName);
+                    var propName = this.camelCaseifyArray(splitName.slice(2));
+                    var attributeValue = element.getAttribute(attributeName);
+                    var propValue = this.castAttributeValueToPropType(attributeValue, propType);
+                    props[propName] = propValue;
+                }
+                return props;
+            }
+        });
+        Object.defineProperty(ParsePropsFromAttributesHelper, "castAttributeValueToPropType", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (value, propType) {
+                if (propType === ParsePropsFromAttributesHelper.BOOLEAN_PREFIX) {
+                    return !(value == null || value === "false" || value === "");
+                }
+                else if (propType === ParsePropsFromAttributesHelper.NUMBER_PREFIX) {
+                    return parseFloat(value);
+                }
+                else if (propType === ParsePropsFromAttributesHelper.STRING_PREFIX) {
+                    return value;
+                }
+                else {
+                    throw new Error("Attempted to cast attribute value to unsupported propType. propType=".concat(propType));
+                }
+            }
+        });
+        Object.defineProperty(ParsePropsFromAttributesHelper, "startsWith", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (string, subString) {
+                return string.indexOf(subString) == 0;
+            }
+        });
+        Object.defineProperty(ParsePropsFromAttributesHelper, "camelCaseifyArray", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (strings) {
+                var result = strings.map(function (string, i) {
+                    if (i !== 0) {
+                        return string[0].toUpperCase() + string.slice(1);
+                    }
+                    else {
+                        return string;
+                    }
+                }).join("");
+                return result;
+            }
+        });
+        Object.defineProperty(ParsePropsFromAttributesHelper, "PROPS_ATTRIBUTE_PREFIX", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: "prop-"
+        });
+        Object.defineProperty(ParsePropsFromAttributesHelper, "BOOLEAN_PREFIX", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: "boolean"
+        });
+        Object.defineProperty(ParsePropsFromAttributesHelper, "NUMBER_PREFIX", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: "number"
+        });
+        Object.defineProperty(ParsePropsFromAttributesHelper, "STRING_PREFIX", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: "string"
+        });
+        return ParsePropsFromAttributesHelper;
+    }());
+    function reactBootstrap(target) {
+        var reactInitElements = target.querySelectorAll("react-init");
+        reactInitElements.forEach(function (ele) {
+            var isLazy = ele.getAttribute("data-load-on-click") === "true";
+            if (isLazy) {
+                lazyReactBootstrapElement(ele);
+            }
+            else {
+                reactBootstrapElement(ele);
+            }
+        });
+    }
+    exports.reactBootstrap = reactBootstrap;
+    function lazyReactBootstrapElement(element) {
+        var onClick = function (event) {
+            reactBootstrapElement(element);
+            element.removeEventListener("click", onClick);
+        };
+        element.addEventListener("click", onClick);
+    }
+    function reactBootstrapElement(element) {
+        var componentName = element.getAttribute("component-name");
+        var functionName = element.getAttribute("function-name");
+        if (componentName != null && functionName != null) {
+            throw new Error("Cannot have both component name and function name defined! componentName=" + componentName);
+        }
+        if (componentName != null) {
+            bootstrapViaComponent(element);
+        }
+        else if (functionName != null) {
+            bootstrapViaFunction(element);
+        }
+        else {
+            throw new Error("Component name or function name must be defined");
+        }
+    }
+    function bootstrapViaComponent(element) {
+        var path = element.getAttribute("require-path");
+        var componentName = element.getAttribute("component-name");
+        var parsedProps = ParsePropsFromAttributesHelper.parsePropsFromAttributes(element);
+        var jsxElementsHelper = new ChildrenToJsxHelper(element);
+        var depsPromise = Promise.all([new Promise(function (resolve_2, reject_2) { require(["react"], resolve_2, reject_2); }), new Promise(function (resolve_3, reject_3) { require(["react-dom"], resolve_3, reject_3); }), new Promise(function (resolve_4, reject_4) { require(["components/GenericErrorBoundary"], resolve_4, reject_4); })]);
+        depsPromise.then(function (_a) {
+            var React = _a[0], ReactDOM = _a[1], GenericErrorBoundaryModule = _a[2];
+            var GenericErrorBoundaryView = GenericErrorBoundaryModule.GenericErrorBoundaryView;
+            var fallback = null;
+            if (jsxElementsHelper.childJsxElements.length == 1) {
+                fallback = jsxElementsHelper.childJsxElements[0];
+            }
+            else if (jsxElementsHelper.childJsxElements.length > 1) {
+                fallback = React.createElement(React.Fragment, null, jsxElementsHelper.childJsxElements);
+            }
+            var LazyComponent = React.lazy(function () {
+                if (componentName) {
+                    return new Promise(function (resolve_5, reject_5) { require([path], resolve_5, reject_5); }).then(function (module) {
+                        return { "default": module[componentName] };
+                    });
+                }
+                else {
+                    return new Promise(function (resolve_6, reject_6) { require([path], resolve_6, reject_6); });
+                }
+            });
+            ReactDOM.render(React.createElement(GenericErrorBoundaryView, { errorView: fallback },
+                React.createElement(React.Suspense, { fallback: fallback },
+                    React.createElement(LazyComponent, __assign({}, parsedProps)))), element);
+        });
+    }
+    function bootstrapViaFunction(element) {
+        var path = element.getAttribute("require-path");
+        var functionName = element.getAttribute("function-name");
+        var parsedProps = ParsePropsFromAttributesHelper.parsePropsFromAttributes(element);
+        new Promise(function (resolve_7, reject_7) { require([path], resolve_7, reject_7); }).then(function (module) {
+            module[functionName](element, parsedProps);
+        });
+    }
+    var IntersectionObserverRef = (function () {
+        function IntersectionObserverRef(callback, options) {
+            var _this = this;
+            Object.defineProperty(this, "current", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "ref", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: function (el) { return _this.handleChange(el); }
+            });
+            Object.defineProperty(this, "intersectionObserver", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            if (typeof window.IntersectionObserver == "undefined") {
+                return;
+            }
+            var wrappedCallback = function (entries, observer) {
+                if ((entries === null || entries === void 0 ? void 0 : entries.length) == 1) {
+                    callback(entries[0], observer);
+                }
+            };
+            this.intersectionObserver = new IntersectionObserver(wrappedCallback, options);
+        }
+        Object.defineProperty(IntersectionObserverRef.prototype, "handleChange", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (el) {
+                var _a, _b;
+                if (el != null && this.current == null) {
+                    this.current = el;
+                    (_a = this.intersectionObserver) === null || _a === void 0 ? void 0 : _a.observe(this.current);
+                }
+                else if (el == null && this.current != null) {
+                    (_b = this.intersectionObserver) === null || _b === void 0 ? void 0 : _b.disconnect();
+                    this.current = null;
+                }
+            }
+        });
+        return IntersectionObserverRef;
+    }());
+    exports.IntersectionObserverRef = IntersectionObserverRef;
+    var StorageManager = (function () {
+        function StorageManager(storage, identifier) {
+            Object.defineProperty(this, "_hasAccessToStorage", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "identifier", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            Object.defineProperty(this, "storage", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: void 0
+            });
+            this.identifier = identifier;
+            this.storage = storage;
+        }
+        Object.defineProperty(StorageManager.prototype, "hasAccessToStorage", {
+            get: function () {
+                if (this._hasAccessToStorage != null) {
+                    return this._hasAccessToStorage;
+                }
+                try {
+                    if (!this.storage) {
+                        return false;
+                    }
+                    this.storage.setItem("storageManager.check", "true");
+                    this.storage.removeItem("storageManager.check");
+                    this._hasAccessToStorage = true;
+                }
+                catch (e) {
+                    this._hasAccessToStorage = false;
+                }
+                return this._hasAccessToStorage;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(StorageManager.prototype, "hasKey", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (key) {
+                try {
+                    if (!this.storage) {
+                        return false;
+                    }
+                    return this.storage.getItem(key) != null;
+                }
+                catch (e) {
+                    console.warn("Failed to get ".concat(this.identifier));
+                    return false;
+                }
+            }
+        });
+        Object.defineProperty(StorageManager.prototype, "getNum", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (key, defaultValue) {
+                try {
+                    if (!this.storage) {
+                        return defaultValue;
+                    }
+                    var num = parseInt(this.storage.getItem(key));
+                    if (isNaN(num)) {
+                        return defaultValue;
+                    }
+                    return num;
+                }
+                catch (e) {
+                    console.warn("Failed to get ".concat(this.identifier));
+                    return defaultValue;
+                }
+            }
+        });
+        Object.defineProperty(StorageManager.prototype, "getBoolean", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (key, defaultValue) {
+                try {
+                    if (!this.storage) {
+                        return defaultValue;
+                    }
+                    var value = this.storage.getItem(key);
+                    if (value == null) {
+                        return defaultValue;
+                    }
+                    return value === "true";
+                }
+                catch (e) {
+                    console.warn("Failed to get ".concat(this.identifier));
+                    return defaultValue;
+                }
+            }
+        });
+        Object.defineProperty(StorageManager.prototype, "getString", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (key, defaultValue) {
+                try {
+                    if (!this.storage) {
+                        return defaultValue;
+                    }
+                    var value = this.storage.getItem(key);
+                    return value !== null && value !== void 0 ? value : defaultValue;
+                }
+                catch (e) {
+                    console.warn("Failed to get ".concat(this.identifier));
+                    return defaultValue;
+                }
+            }
+        });
+        Object.defineProperty(StorageManager.prototype, "setKey", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (key, value) {
+                try {
+                    if (!this.storage) {
+                        return;
+                    }
+                    return this.storage.setItem(key, value.toString());
+                }
+                catch (e) {
+                    console.warn("Failed to get ".concat(this.identifier));
+                }
+            }
+        });
+        return StorageManager;
+    }());
+    exports.LocalStorageManager = new StorageManager(localStorage, "localStorage");
+    exports.SessionStorageManager = new StorageManager(sessionStorage, "sessionStorage");
+    var ReactTransitionBetweenComponents = (function (_super) {
+        __extends(ReactTransitionBetweenComponents, _super);
+        function ReactTransitionBetweenComponents() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        Object.defineProperty(ReactTransitionBetweenComponents.prototype, "render", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var initialComponentClass = this.props.showInitial ? this.props.onMountClassStr : this.props.onUnmountClassStr;
+                var secondComponentClass = this.props.showSecondary ? this.props.onMountClassStr : this.props.onUnmountClassStr;
+                return (React.createElement("div", { className: this.props.customClassStr },
+                    React.createElement("div", { className: initialComponentClass }, this.props.initialComponent),
+                    React.createElement("div", { className: secondComponentClass }, this.props.secondaryComponent)));
+            }
+        });
+        return ReactTransitionBetweenComponents;
+    }(React.Component));
+    exports.ReactTransitionBetweenComponents = ReactTransitionBetweenComponents;
+    var MathJaxText = (function (_super) {
+        __extends(MathJaxText, _super);
+        function MathJaxText() {
+            var _this = _super !== null && _super.apply(this, arguments) || this;
+            Object.defineProperty(_this, "elementRef", {
+                enumerable: true,
+                configurable: true,
+                writable: true,
+                value: React.createRef()
+            });
+            return _this;
+        }
+        Object.defineProperty(MathJaxText.prototype, "render", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var _a = this.props, dangerousText = _a.dangerousText, as = _a.as, props = __rest(_a, ["dangerousText", "as"]);
+                if (as == "div") {
+                    return React.createElement("div", __assign({}, props, { ref: this.elementRef, dangerouslySetInnerHTML: { __html: dangerousText } }));
+                }
+                if (as == "li") {
+                    return React.createElement("li", __assign({}, props, { ref: this.elementRef, dangerouslySetInnerHTML: { __html: dangerousText } }));
+                }
+                if (as == "span") {
+                    return React.createElement("span", __assign({}, props, { ref: this.elementRef, dangerouslySetInnerHTML: { __html: dangerousText } }));
+                }
+                if (as == "td") {
+                    return React.createElement("td", __assign({}, props, { ref: this.elementRef, dangerouslySetInnerHTML: { __html: dangerousText } }));
+                }
+                if (as == "th") {
+                    return React.createElement("th", __assign({}, props, { ref: this.elementRef, dangerouslySetInnerHTML: { __html: dangerousText } }));
+                }
+                console.warn("unexpected MathJax element type=" + as + ". you must add support for it.");
+                return null;
+            }
+        });
+        Object.defineProperty(MathJaxText.prototype, "componentDidMount", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                this.renderMathJaxIfNeeded();
+            }
+        });
+        Object.defineProperty(MathJaxText.prototype, "componentDidUpdate", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function (prevProps, prevState, snapshot) {
+                if (prevProps.dangerousText == this.props.dangerousText) {
+                    return;
+                }
+                this.renderMathJaxIfNeeded();
+            }
+        });
+        Object.defineProperty(MathJaxText.prototype, "renderMathJaxIfNeeded", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: function () {
+                var text = this.props.dangerousText;
+                if (text == null || !containsMathJax(text) || this.elementRef.current == null) {
+                    return;
+                }
+                renderMathJax(this.elementRef);
+            }
+        });
+        return MathJaxText;
+    }(React.Component));
+    exports.MathJaxText = MathJaxText;
+    var renderReplace = function (component, targetElement, tagName) {
+        var placeHolderContainer = document.createElement(tagName !== null && tagName !== void 0 ? tagName : "div");
+        targetElement.parentNode.insertBefore(placeHolderContainer, targetElement.nextSibling);
+        targetElement.remove();
+        ReactDOM.render(component, placeHolderContainer);
+    };
+    exports.renderReplace = renderReplace;
+    var useMeasureElementSize = function () {
+        var _a = (0, react_1.useState)(null), dimensions = _a[0], setDimensions = _a[1];
+        var observerRef = (0, react_1.useRef)(null);
+        var currentElement = (0, react_1.useRef)(null);
+        var measureElementRef = (0, react_1.useCallback)(function (element) {
+            var _a, _b;
+            if (!element) {
+                (_a = observerRef.current) === null || _a === void 0 ? void 0 : _a.disconnect();
+                setDimensions(null);
+                return;
+            }
+            if (observerRef.current == null) {
+                observerRef.current = new ResizeObserver(function (e) {
+                    setDimensions(e[0]);
+                });
+            }
+            if (currentElement.current !== element) {
+                (_b = observerRef.current) === null || _b === void 0 ? void 0 : _b.disconnect();
+                observerRef.current.observe(element);
+                currentElement.current = element;
+            }
+        }, []);
+        return { dimensions: dimensions, measureElementRef: measureElementRef };
+    };
+    exports.useMeasureElementSize = useMeasureElementSize;
+    var extractStudyHTMLAttributes = function (props) {
+        var studyProps = {};
+        if (props == null) {
+            return studyProps;
+        }
+        for (var key in props) {
+            if (key.startsWith("data-")) {
+                studyProps[key] = props[key];
+            }
+        }
+        if (props["test-id"]) {
+            studyProps["test-id"] = props["test-id"];
+        }
+        return studyProps;
+    };
+    exports.extractStudyHTMLAttributes = extractStudyHTMLAttributes;
+});
+
+//# sourceMappingURL=react-study-helpers.js.map

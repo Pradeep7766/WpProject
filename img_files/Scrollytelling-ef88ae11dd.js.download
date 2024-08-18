@@ -1,0 +1,158 @@
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+define(["require", "exports", "react", "react", "homepage/JumpLinks", "@study-com/react-utils", "lib/scrollama"], function (require, exports, React, react_1, JumpLinks_1, react_utils_1, scrollama) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    exports.ScrollytellingComponent = void 0;
+    function isInstanceOf(thing, superclass) {
+        var prototype = Object.getPrototypeOf(thing);
+        var name;
+        do {
+            name = prototype.constructor.name;
+            if (name == superclass.name) {
+                return true;
+            }
+            prototype = Object.getPrototypeOf(prototype);
+        } while (prototype.constructor.name !== "Object");
+        return false;
+    }
+    function isArrayOf(things, superclass) {
+        if (!Array.isArray(things)) {
+            return false;
+        }
+        return things.every(function (thing) { return isInstanceOf(thing, superclass); });
+    }
+    function isArrayOrInstanceOf(thing, superclass) {
+        return isArrayOf(thing, superclass) || isInstanceOf(thing, superclass);
+    }
+    function createRefThatReplacesContentWith(element) {
+        var didAppendContent = false;
+        return function (container) {
+            if (!didAppendContent) {
+                Array.isArray(element)
+                    ? container.append.apply(container, element) : container.append(element);
+                didAppendContent = true;
+            }
+        };
+    }
+    var isDesktopMediaQuery = window.matchMedia("(min-width: 768px)");
+    var useDetectSticky = function (ref, observerSettings) {
+        if (observerSettings === void 0) { observerSettings = { threshold: [1] }; }
+        var _a = (0, react_1.useState)(false), isSticky = _a[0], setIsSticky = _a[1];
+        ref = ref || (0, react_1.useRef)();
+        (0, react_1.useEffect)(function () {
+            var observer = new IntersectionObserver(function (_a) {
+                var e = _a[0];
+                return setIsSticky(e.intersectionRatio < 1);
+            }, observerSettings);
+            observer.observe(ref.current);
+            return function () {
+                observer.unobserve(ref.current);
+            };
+        }, []);
+        return [isSticky, ref, setIsSticky];
+    };
+    var ScrollytellingComponent = function (_a) {
+        var sections = _a.sections, jumpLinks = _a.jumpLinks;
+        var _b = (0, react_1.useState)(function () { return isDesktopMediaQuery.matches; }), useDesktop = _b[0], setUseDesktop = _b[1];
+        var _c = (0, react_1.useState)(null), activeSection = _c[0], setActiveSection = _c[1];
+        var scrollytellingRef = (0, react_1.useRef)(null);
+        var sectionsWithState = (0, react_1.useMemo)(function () {
+            var arr = sections;
+            for (var i = 0; i < arr.length; i++) {
+                var s = arr[i];
+                s.state = i ? "exited-from-top" : "entered-from-top";
+            }
+            return arr;
+        }, []);
+        (0, react_1.useEffect)(function () {
+            var eventType = "change";
+            var handler = function (event) { return setUseDesktop(event.matches); };
+            isDesktopMediaQuery.addEventListener(eventType, handler);
+            return function () { return isDesktopMediaQuery.removeEventListener(eventType, handler); };
+        }, []);
+        (0, react_1.useEffect)(function () {
+            if (!scrollytellingRef.current) {
+                return function () { };
+            }
+            var scrollamaInstance = scrollama()
+                .setup({
+                step: useDesktop ? ".scrollytelling__static" : ".scrollytelling",
+                parent: scrollytellingRef.current,
+            })
+                .onStepEnter(function (_a) {
+                var direction = _a.direction, index = _a.index;
+                sectionsWithState.forEach(function (section, i) {
+                    if (i < index) {
+                        section.state = "exited-from-bottom";
+                    }
+                    if (i == index) {
+                        section.state = (direction == "down" ? "entered-from-top" : "entered-from-bottom");
+                    }
+                    if (i > index) {
+                        section.state = "exited-from-top";
+                    }
+                });
+                setActiveSection(sectionsWithState[index]);
+            });
+            return function () {
+                scrollamaInstance.destroy();
+            };
+        }, [useDesktop]);
+        var getActiveSectionIndex = function () {
+            return Math.max(0, sectionsWithState.indexOf(activeSection));
+        };
+        var classNames = function (section, baseClass) {
+            var c = [baseClass];
+            if (section === activeSection) {
+                c.push(baseClass + "--active");
+            }
+            if (section.state) {
+                c.push(baseClass + "--" + section.state);
+            }
+            return c.join(" ");
+        };
+        return React.createElement("div", { className: "scrollytelling-and-jump-links-container" },
+            (!!jumpLinks && jumpLinks.length > 0) &&
+                React.createElement(JumpLinks_1.JumpLinksComponent, { jumpLinks: jumpLinks, activeIndex: getActiveSectionIndex(), isDesktop: useDesktop }),
+            useDesktop &&
+                React.createElement("div", { ref: scrollytellingRef, className: "scrollytelling", style: { backgroundColor: activeSection === null || activeSection === void 0 ? void 0 : activeSection.backgroundColor } }, sectionsWithState.map(function (section, idx) { return React.createElement(React.Fragment, { key: idx },
+                    React.createElement(WrapContent, { wrappedContent: section.stickyContent, className: classNames(section, "scrollytelling__sticky") }),
+                    React.createElement(WrapContent, { wrappedContent: section.staticContent, className: classNames(section, "scrollytelling__static"), id: !!jumpLinks && jumpLinks.length > 0 ? jumpLinks[idx].sectionId : undefined })); })),
+            !useDesktop &&
+                React.createElement("div", { ref: scrollytellingRef }, sectionsWithState.map(function (section, idx) {
+                    return React.createElement("div", { id: !!jumpLinks && jumpLinks.length > 0 ? jumpLinks[idx].sectionId : undefined, className: "scrollytelling", key: idx, style: { backgroundColor: section.backgroundColor } },
+                        React.createElement(WrapContent, { wrappedContent: section.stickyContent, className: classNames(section, "scrollytelling__sticky") }),
+                        React.createElement(WrapContent, { wrappedContent: section.staticContent, className: classNames(section, "scrollytelling__static") }));
+                })));
+    };
+    exports.ScrollytellingComponent = ScrollytellingComponent;
+    var WrapContent = React.forwardRef(function (_a, forwardedRef) {
+        var wrappedContent = _a.wrappedContent, props = __rest(_a, ["wrappedContent"]);
+        return isArrayOrInstanceOf(wrappedContent, HTMLElement)
+            ? React.createElement("div", __assign({ ref: (0, react_utils_1.legacyCombinedRef)(forwardedRef, createRefThatReplacesContentWith(wrappedContent), forwardedRef) }, props))
+            : React.createElement("div", __assign({}, props), wrappedContent);
+    });
+});
+
+//# sourceMappingURL=Scrollytelling.js.map
